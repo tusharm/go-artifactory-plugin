@@ -1,4 +1,4 @@
-go-artifactory-plugin
-=====================
+## Artifactory plugin for ThoughtWorks Go
 
-Artifactory plugin for ThoughtWorks Go
+
+
