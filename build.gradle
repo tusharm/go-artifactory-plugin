@@ -1,1 +1,19 @@
 apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+dependencies {
+    compile 'com.thoughtworks.go:go-plugin-api:14.1.0'
+
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url './libs'
+    }
+}
