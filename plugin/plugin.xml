@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<go-plugin id="${groupId}.${artifactId}" version="1">
+    <about>
+        <name>Artifactory Plugin</name>
+        <version>${version}</version>
+        <target-go-version>${go.version}</target-go-version>
+        <description>Plugin to integrate Go with Artifactory</description>
+        <vendor>
+            <name>Tushar Madhukar</name>
+            <url>${url}</url>
+        </vendor>
+        <target-os>
+            <value>Linux</value>
+            <value>Mac</value>
+            <value>Windows</value>
+        </target-os>
+    </about>
+</go-plugin>
