@@ -81,6 +81,7 @@
                     <descriptors>
                         <descriptor>plugin/assembly-descriptor.xml</descriptor>
                     </descriptors>
+                    <outputDirectory>${project.build.directory}/dist</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -96,7 +97,7 @@
 
     <repositories>
         <repository>
-            <id>local</id>
+            <id>project-local</id>
             <name>Local</name>
             <url>file://${basedir}/libs/</url>
         </repository>
