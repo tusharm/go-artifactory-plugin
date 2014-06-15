@@ -30,7 +30,7 @@ public class PublishTask implements Task {
 
     @Override
     public TaskView view() {
-        return new ArtifactoryTaskView("publish", "Publish to Artifactory");
+        return new ArtifactoryTaskView("Publish to Artifactory", "publish");
     }
 
     @Override

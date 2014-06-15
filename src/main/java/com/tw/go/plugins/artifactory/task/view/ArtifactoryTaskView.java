@@ -12,17 +12,17 @@ import static java.lang.String.format;
 public class ArtifactoryTaskView implements TaskView {
     private final Logger logger = getLoggerFor(this.getClass());
 
+    private final String title;
     private final String template;
-    private final String displayValue;
 
-    public ArtifactoryTaskView(String template, String displayValue) {
+    public ArtifactoryTaskView(String title, String template) {
+        this.title = title;
         this.template = template;
-        this.displayValue = displayValue;
     }
 
     @Override
     public String displayValue() {
-        return displayValue;
+        return title;
     }
 
     @Override

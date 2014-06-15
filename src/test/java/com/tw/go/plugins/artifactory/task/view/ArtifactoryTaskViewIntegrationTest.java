@@ -10,7 +10,7 @@ public class ArtifactoryTaskViewIntegrationTest {
     @Test
     @Ignore("the call to Logger in PublishTaskView results in an error")
     public void shouldReadViewTemplateFromClasspath() {
-        ArtifactoryTaskView view = new ArtifactoryTaskView("test", "displayValue");
+        ArtifactoryTaskView view = new ArtifactoryTaskView("displayValue", "test");
 
         assertThat(view.displayValue(), is("displayValue"));
         assertThat(view.template(), is("<html></html>"));
