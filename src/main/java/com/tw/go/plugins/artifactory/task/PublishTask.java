@@ -13,7 +13,6 @@ import com.tw.go.plugins.artifactory.task.view.TemplateBasedTaskView;
 
 @Extension
 public class PublishTask implements Task {
-    public static final String URL_CONFIG_NAME = "url";
     private PublishTaskConfig publishTaskConfig;
 
     @Load
