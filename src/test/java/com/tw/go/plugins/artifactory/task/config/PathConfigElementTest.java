@@ -18,6 +18,23 @@ public class PathConfigElementTest {
 
         error = path.validate("/a/b");
         ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+
+        error = path.validate("/a/b");
+        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
     }
 
+    @Test
+    public void shouldNotValidateAnAbsolutePath() {
+        Optional<ValidationError> error = path.validate("/a/b");
+        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+
+        error = path.validate("E:\\b");
+        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+    }
+
+    @Test
+    public void shouldNotValidateEmptyPath() {
+        Optional<ValidationError> error = path.validate("");
+        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+    }
 }

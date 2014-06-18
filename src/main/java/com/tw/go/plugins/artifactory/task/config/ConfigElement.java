@@ -17,7 +17,10 @@ public enum ConfigElement {
     path("Path should be relative to workspace") {
         @Override
         public boolean isValid(String value) {
-            return !value.startsWith(File.separator);
+            if (value.isEmpty())
+                return false;
+
+            return ! (value.startsWith(File.separator) || value.matches("\\w:.*"));
         }
     };
 
