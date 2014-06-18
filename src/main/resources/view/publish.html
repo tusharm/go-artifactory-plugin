@@ -2,4 +2,8 @@
     <label>Artifactory URL:<span class="asterisk">*</span></label>
     <input type="text" ng-model="url" />
     <span class="form_error" ng-show="GOINPUTNAME[url].$error.server">{{ GOINPUTNAME[url].$error.server }}</span>
+
+    <input type="text" ng-model="path" />
+    <span class="form_error" ng-show="GOINPUTNAME[path].$error.server">{{ GOINPUTNAME[path].$error.server }}</span>
+
 </div>
