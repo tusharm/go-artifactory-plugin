@@ -12,18 +12,12 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
 import static java.lang.String.format;
 
 public class PublishTaskExecutor implements TaskExecutor {
     private Logger logger = Logger.getLogger(getClass());
-
-    private String uriKey;
-    private String pathKey;
-
-    public PublishTaskExecutor(String uriKey, String pathKey) {
-        this.uriKey = uriKey;
-        this.pathKey = pathKey;
-    }
 
     @Override
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
@@ -33,8 +27,8 @@ public class PublishTaskExecutor implements TaskExecutor {
         String password = ARTIFACTORY_PASSWORD.from(environment).get();
         ArtifactoryClient client = new ArtifactoryClient(url, user, password);
 
-        String artifactPath = config.getValue(pathKey);
-        String artifactUri = config.getValue(uriKey);
+        String artifactPath = config.getValue(path.name());
+        String artifactUri = config.getValue(uri.name());
 
         try {
             client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri);

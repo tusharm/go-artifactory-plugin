@@ -23,7 +23,7 @@ public class PublishTask extends GenericTask {
 
     @Override
     public TaskExecutor executor() {
-        return new PublishTaskExecutor(uri.name(), path.name());
+        return new PublishTaskExecutor();
     }
 
     @Override

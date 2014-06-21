@@ -30,7 +30,7 @@ public class PublishTaskExecutorIntegrationTest {
 
     @Before
     public void beforeEach() {
-        executor = new PublishTaskExecutor("uri", "path");
+        executor = new PublishTaskExecutor();
     }
 
     @Test
