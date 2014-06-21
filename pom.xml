@@ -12,6 +12,7 @@
 
     <properties>
         <go.version>14.1.0</go.version>
+        <buildinfo.version>2.2.7</buildinfo.version>
     </properties>
 
     <licenses>
@@ -30,6 +31,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jfrog.buildinfo</groupId>
+            <artifactId>build-info-client</artifactId>
+            <version>${buildinfo.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
@@ -39,6 +45,12 @@
             <artifactId>go-plugin-api</artifactId>
             <version>${go.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks</groupId>
+            <artifactId>web-stub</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.truth0</groupId>
@@ -107,6 +119,11 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>jfrog-libs</id>
+            <name>JFrog</name>
+            <url>http://repo.jfrog.org/artifactory/libs-releases</url>
+        </repository>
         <repository>
             <id>project-local</id>
             <name>Local</name>

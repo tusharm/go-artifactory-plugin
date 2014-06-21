@@ -8,10 +8,10 @@ import java.io.File;
 import static com.google.common.base.Optional.fromNullable;
 
 public enum ConfigElement {
-    url("Invalid HTTP URL") {
+    uri("Invalid uri") {
         @Override
         public boolean isValid(String value) {
-            return value.matches("http(s)?://.*");
+            return value.matches("[^/].*");
         }
     },
     path("Path should be relative to workspace") {
