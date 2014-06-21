@@ -1,18 +1,17 @@
 package com.tw.go.plugins.artifactory.task.view;
 
 import com.google.common.io.CharStreams;
-import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.task.TaskView;
+import com.tw.go.plugins.artifactory.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.thoughtworks.go.plugin.api.logging.Logger.getLoggerFor;
 import static java.lang.String.format;
 
 public class TemplateBasedTaskView implements TaskView {
-    private final Logger logger = getLoggerFor(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     private final String title;
     private final String template;
@@ -33,7 +32,9 @@ public class TemplateBasedTaskView implements TaskView {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath());
             return read(inputStream);
         } catch (IOException e) {
-            return log(format("Could not load view template [%s]!", template), e);
+            String message = format("Could not load view template [%s]!", template);
+            logger.error(message, e);
+            return message;
         }
     }
 
@@ -45,10 +46,5 @@ public class TemplateBasedTaskView implements TaskView {
         try (InputStreamReader reader = new InputStreamReader(stream, "UTF-8")) {
             return CharStreams.toString(reader);
         }
-    }
-
-    private String log(String contextualizedMessage, Exception ex) {
-        logger.error(format("%s: %s", contextualizedMessage, ex.getMessage()));
-        return contextualizedMessage;
     }
 }

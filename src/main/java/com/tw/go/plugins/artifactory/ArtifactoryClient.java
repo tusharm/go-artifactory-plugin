@@ -1,7 +1,6 @@
 package com.tw.go.plugins.artifactory;
 
 import com.google.common.base.Splitter;
-import org.jfrog.build.api.util.NullLog;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 
@@ -10,14 +9,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class ArtifactoryClient {
-    private ArtifactoryBuildInfoClient artifactoryBuildInfoClient;
+    private Logger logger = Logger.getLogger(getClass());
+
+    private ArtifactoryBuildInfoClient buildInfoClient;
 
     public ArtifactoryClient(String artifactoryUrl, String user, String password) {
-        this.artifactoryBuildInfoClient = new ArtifactoryBuildInfoClient(artifactoryUrl, user, password, new NullLog());
-    }
-
-    public ArtifactoryBuildInfoClient getArtifactoryBuildInfoClient() {
-        return artifactoryBuildInfoClient;
+        this.buildInfoClient = new ArtifactoryBuildInfoClient(artifactoryUrl, user, password, logger);
     }
 
     public String uploadArtifact(String sourcePath, String destinationUri) throws IOException {
@@ -28,7 +25,7 @@ public class ArtifactoryClient {
         File artifactFile = new File(sourcePath);
 
         DeployDetails deployDetails = new DeployDetails.Builder().targetRepository(repository).artifactPath(artifactPath).file(artifactFile).build();
-        getArtifactoryBuildInfoClient().deployArtifact(deployDetails);
+        buildInfoClient.deployArtifact(deployDetails);
         return artifactPath;
     }
 
