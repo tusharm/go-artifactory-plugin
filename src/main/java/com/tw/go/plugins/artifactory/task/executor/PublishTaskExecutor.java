@@ -22,22 +22,23 @@ public class PublishTaskExecutor implements TaskExecutor {
     @Override
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
         EnvironmentVariables environment = context.environment();
-        String url = ARTIFACTORY_URL.from(environment).get();
-        String user = ARTIFACTORY_USER.from(environment).get();
-        String password = ARTIFACTORY_PASSWORD.from(environment).get();
-        ArtifactoryClient client = new ArtifactoryClient(url, user, password);
+        String url = ARTIFACTORY_URL.from(environment);
+        String user = ARTIFACTORY_USER.from(environment);
+        String password = ARTIFACTORY_PASSWORD.from(environment);
 
         String artifactPath = config.getValue(path.name());
         String artifactUri = config.getValue(uri.name());
 
         try {
+            ArtifactoryClient client = new ArtifactoryClient(url, user, password);
             client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri);
         }
         catch (IOException e) {
-            logger.error("Error publishing artifact", e);
-            return ExecutionResult.failure("Error publishing artifact: " + e.getMessage());
+            String message = format("Failed to publish artifact [%s]", artifactPath);
+            logger.error(message, e);
+            return ExecutionResult.failure(format("%s: %s", message, e.getMessage()));
         }
 
-        return ExecutionResult.success(format("Published artifact [%s]", artifactPath));
+        return ExecutionResult.success(format("Successfully published artifact [%s]", artifactPath));
     }
 }
