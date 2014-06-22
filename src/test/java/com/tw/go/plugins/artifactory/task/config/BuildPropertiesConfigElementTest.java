@@ -10,7 +10,7 @@ import java.util.Map;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static org.truth0.Truth.ASSERT;
 
-public class PropertiesConfigElementTest {
+public class BuildPropertiesConfigElementTest {
     @Test
     public void shouldValidateKeyValuePairsSeparatedByNewline() {
         ASSERT.that(properties.validate("a=b")).isAbsent();

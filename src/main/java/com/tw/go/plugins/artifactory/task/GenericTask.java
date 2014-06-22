@@ -10,11 +10,12 @@ import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.view.TemplateBasedTaskView;
 
 import java.util.EnumSet;
+import java.util.List;
 
 public abstract class GenericTask implements Task {
-    private EnumSet<ConfigElement> configs;
+    private List<ConfigElement<?>> configs;
 
-    public GenericTask(EnumSet<ConfigElement> configs) {
+    public GenericTask(List<ConfigElement<?>> configs) {
         this.configs = configs;
     }
 

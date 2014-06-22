@@ -17,6 +17,7 @@ import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
 import static java.lang.String.format;
 
@@ -32,7 +33,7 @@ public class PublishTaskExecutor implements TaskExecutor {
 
         String artifactPath = path.from(config);
         String artifactUri = uri.from(config);
-        Map<String, String> buildProperties = ConfigElement.properties.from(config);
+        Map<String, String> buildProperties = properties.from(config);
 
         try (ArtifactoryClient client = new ArtifactoryClient(url, user, password)) {
             client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri, buildProperties);

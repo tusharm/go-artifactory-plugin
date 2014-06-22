@@ -10,56 +10,28 @@ import java.util.Map;
 
 import static com.google.common.base.Optional.fromNullable;
 
-public enum ConfigElement {
-    uri("Invalid uri") {
-        @Override
-        public boolean isValid(String value) {
-            return value.matches("[^/].*");
-        }
+public abstract class ConfigElement<T> {
+    public static ConfigElement<String> uri = new UriConfigElement();
+    public static ConfigElement<String> path = new PathConfigElement();
+    public static ConfigElement<Map<String, String>> properties = new BuildPropertiesConfigElement();
 
-        @Override
-        public String from(TaskConfig taskConfig) {
-            return taskConfig.getValue(name());
-        }
-    },
-    path("Path should be relative to workspace") {
-        @Override
-        public boolean isValid(String value) {
-            if (value.isEmpty())
-                return false;
-
-            return ! (value.startsWith(File.separator) || value.matches("\\w:.*"));
-        }
-
-        @Override
-        public String from(TaskConfig taskConfig) {
-            return taskConfig.getValue(name());
-        }
-    },
-    properties("Invalid properties format") {
-        @Override
-        public boolean isValid(String value) {
-            return value.matches("[^=]+=[^=]+((\n)+[^=]+=[^=]+)*(\n)*");
-        }
-
-        @Override
-        public Map<String, String> from(TaskConfig taskConfig) {
-            String propertiesString = taskConfig.getValue(name());
-            return Splitter.on("\n").omitEmptyStrings().withKeyValueSeparator("=").split(propertiesString);
-        }
-    };
-
+    private String name;
     private String validationErrorMessage;
 
-    ConfigElement(String validationErrorMessage) {
+    protected ConfigElement(String name, String validationErrorMessage) {
+        this.name = name;
         this.validationErrorMessage = validationErrorMessage;
+    }
+
+    public String name() {
+        return name;
     }
 
     public Optional<ValidationError> validate(String value) {
         return fromNullable(isValid(value) ? null : new ValidationError(name(), validationErrorMessage));
     }
 
-    public abstract boolean isValid(String value);
+    protected abstract boolean isValid(String value);
 
-    public abstract <T> T from(TaskConfig taskConfig);
+    public abstract T from(TaskConfig taskConfig);
 }

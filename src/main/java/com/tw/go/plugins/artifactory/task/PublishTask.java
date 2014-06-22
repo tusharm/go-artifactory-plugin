@@ -6,19 +6,21 @@ import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.executor.PublishTaskExecutor;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
+import static java.util.Arrays.asList;
 
 @Extension
 public class PublishTask extends GenericTask {
 
     public PublishTask() {
-        this(EnumSet.of(uri, path, properties));
+        this(asList(uri, path, properties));
     }
 
-    public PublishTask(EnumSet<ConfigElement> configs) {
+    public PublishTask(List<ConfigElement<?>> configs) {
         super(configs);
     }
 
