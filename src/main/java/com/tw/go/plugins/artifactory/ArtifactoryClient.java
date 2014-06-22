@@ -4,11 +4,12 @@ import com.google.common.base.Splitter;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class ArtifactoryClient {
+public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
 
     private ArtifactoryBuildInfoClient buildInfoClient;
@@ -17,20 +18,24 @@ public class ArtifactoryClient {
         this.buildInfoClient = new ArtifactoryBuildInfoClient(artifactoryUrl, user, password, logger);
     }
 
-    public String uploadArtifact(String sourcePath, String destinationUri) throws IOException {
-        List<String> uriSegments = toRepoAndArtifactPath(destinationUri);
-        String repository = uriSegments.get(0);
-        String artifactPath = uriSegments.get(1);
+    public ArtifactoryClient(ArtifactoryBuildInfoClient buildInfoClient) {
+        this.buildInfoClient = buildInfoClient;
+    }
 
-        File artifactFile = new File(sourcePath);
+    public void uploadArtifact(String sourcePath, String destinationUri) throws IOException {
+        List<String> uriSegments = Splitter.on("/").limit(2).splitToList(destinationUri);
 
-        DeployDetails deployDetails = new DeployDetails.Builder().targetRepository(repository).artifactPath(artifactPath).file(artifactFile).build();
+        DeployDetails deployDetails = new DeployDetails.Builder()
+                .targetRepository(uriSegments.get(0))
+                .artifactPath(uriSegments.get(1))
+                .file(new File(sourcePath))
+                .build();
+
         buildInfoClient.deployArtifact(deployDetails);
-        return artifactPath;
     }
 
-    private List<String> toRepoAndArtifactPath(String uri) {
-        return Splitter.on("/").limit(2).splitToList(uri);
+    @Override
+    public void close() throws IOException {
+        buildInfoClient.shutdown();
     }
-
 }
