@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
@@ -22,13 +23,14 @@ public class ArtifactoryClient implements Closeable {
         this.buildInfoClient = buildInfoClient;
     }
 
-    public void uploadArtifact(String sourcePath, String destinationUri) throws IOException {
+    public void uploadArtifact(String sourcePath, String destinationUri, Map<String, String> properties) throws IOException {
         List<String> uriSegments = Splitter.on("/").limit(2).splitToList(destinationUri);
 
         DeployDetails deployDetails = new DeployDetails.Builder()
                 .targetRepository(uriSegments.get(0))
                 .artifactPath(uriSegments.get(1))
                 .file(new File(sourcePath))
+                .addProperties(properties)
                 .build();
 
         buildInfoClient.deployArtifact(deployDetails);

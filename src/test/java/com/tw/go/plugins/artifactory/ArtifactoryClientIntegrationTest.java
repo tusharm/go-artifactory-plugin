@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -25,8 +27,12 @@ public class ArtifactoryClientIntegrationTest {
 
     @Test
     public void shouldUploadAnArtifact() throws IOException {
+        Map<String, String> properties = new HashMap<String, String>() {{
+            put("a", "b");
+        }};
+
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
-        client.uploadArtifact(sourcePath, "repo/path/to/artifact.txt");
+        client.uploadArtifact(sourcePath, "repo/path/to/artifact.txt", properties);
 
         ArgumentCaptor<DeployDetails> captor = ArgumentCaptor.forClass(DeployDetails.class);
         verify(buildInfoClient).deployArtifact(captor.capture());
@@ -35,6 +41,7 @@ public class ArtifactoryClientIntegrationTest {
         ASSERT.that(deployDetails.getTargetRepository()).is("repo");
         ASSERT.that(deployDetails.getArtifactPath()).is("path/to/artifact.txt");
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
+        ASSERT.that(deployDetails.getProperties()).isEqualTo(properties);
     }
 
     @Test

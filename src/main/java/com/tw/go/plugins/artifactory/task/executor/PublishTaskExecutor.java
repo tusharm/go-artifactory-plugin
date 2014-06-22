@@ -7,9 +7,11 @@ import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.thoughtworks.go.plugin.api.task.TaskExecutor;
 import com.tw.go.plugins.artifactory.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.Logger;
+import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
@@ -28,11 +30,12 @@ public class PublishTaskExecutor implements TaskExecutor {
         String user = ARTIFACTORY_USER.from(environment);
         String password = ARTIFACTORY_PASSWORD.from(environment);
 
-        String artifactPath = config.getValue(path.name());
-        String artifactUri = config.getValue(uri.name());
+        String artifactPath = path.from(config);
+        String artifactUri = uri.from(config);
+        Map<String, String> buildProperties = ConfigElement.properties.from(config);
 
         try (ArtifactoryClient client = new ArtifactoryClient(url, user, password)) {
-            client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri);
+            client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri, buildProperties);
         }
         catch (IOException e) {
             String message = format("Failed to publish artifact [%s]", artifactPath);

@@ -10,8 +10,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
+import static java.lang.String.format;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.truth0.Truth.ASSERT;
@@ -35,7 +39,9 @@ public class PublishTaskExecutorIntegrationTest {
 
     @Test
     public void shouldUploadAnArtifact() {
-        TaskConfig config = taskConfig("test-repo/path/to/artifact.ext", "src/test/resources/artifact.txt");
+        Map<String, String> buildProperties = new HashMap() {{ put("a", "b"); }};
+        TaskConfig config = taskConfig("test-repo/path/to/artifact.ext", "src/test/resources/artifact.txt", buildProperties);
+
         TaskExecutionContext executionContext =
                 new TaskExecutionContextBuilder().withWorkingDir(System.getProperty("user.dir"))
                 .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
@@ -57,10 +63,16 @@ public class PublishTaskExecutorIntegrationTest {
         server.stop();
     }
 
-    private TaskConfig taskConfig(String artifactUri, String artifactPath) {
+    private TaskConfig taskConfig(String artifactUri, String artifactPath, Map<String, String> buildProperties) {
         TaskConfig config = mock(TaskConfig.class);
         when(config.getValue("uri")).thenReturn(artifactUri);
         when(config.getValue("path")).thenReturn(artifactPath);
+
+        StringBuilder props = new StringBuilder();
+        for (String key : buildProperties.keySet()) {
+            props.append(format("%s=%s\n", key, buildProperties.get(key)));
+        }
+        when(config.getValue("properties")).thenReturn(props.toString());
         return config;
     }
 }
