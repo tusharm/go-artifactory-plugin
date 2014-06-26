@@ -6,8 +6,10 @@ import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.thoughtworks.go.plugin.api.task.TaskExecutor;
 import com.tw.go.plugins.artifactory.ArtifactoryClient;
+import com.tw.go.plugins.artifactory.BuildDetails;
 import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.task.config.ConfigElement;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +29,13 @@ public class PublishTaskExecutor implements TaskExecutor {
     @Override
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
         EnvironmentVariables environment = context.environment();
+
         String url = ARTIFACTORY_URL.from(environment);
         String user = ARTIFACTORY_USER.from(environment);
         String password = ARTIFACTORY_PASSWORD.from(environment);
+        String pipeline = GO_PIPELINE_NAME.from(environment);
+        String pipelineCounter = GO_PIPELINE_COUNTER.from(environment);
+        String stageCounter = GO_STAGE_COUNTER.from(environment);
 
         String artifactPath = path.from(config);
         String artifactUri = uri.from(config);
@@ -37,6 +43,9 @@ public class PublishTaskExecutor implements TaskExecutor {
 
         try (ArtifactoryClient client = new ArtifactoryClient(url, user, password)) {
             client.uploadArtifact(context.workingDir() + File.separator + artifactPath, artifactUri, buildProperties);
+
+            BuildDetails details = new BuildDetails(pipeline, format("%s.%s", pipelineCounter, stageCounter), new DateTime());
+            client.uploadBuildDetails(details);
         }
         catch (IOException e) {
             String message = format("Failed to publish artifact [%s]", artifactPath);

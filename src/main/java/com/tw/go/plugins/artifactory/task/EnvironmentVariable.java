@@ -5,7 +5,7 @@ import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
 import java.util.Map;
 
 public enum EnvironmentVariable {
-    ARTIFACTORY_URL, ARTIFACTORY_USER, ARTIFACTORY_PASSWORD;
+    ARTIFACTORY_URL, ARTIFACTORY_USER, ARTIFACTORY_PASSWORD, GO_PIPELINE_NAME, GO_PIPELINE_COUNTER, GO_STAGE_COUNTER;
 
     public String from(EnvironmentVariables variables) {
         Map<String, String> envMap = variables.asMap();

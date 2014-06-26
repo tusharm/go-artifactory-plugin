@@ -34,11 +34,14 @@ public class PublishTaskExecutorIntegrationTest {
 
     @Before
     public void beforeEach() {
+        artifactoryStub.reset();
+        artifactoryStub.get("/api/system/version").returns(response(200).withContent("{ \"version\" : \"3.2.1.1\" }"));
+
         executor = new PublishTaskExecutor();
     }
 
     @Test
-    public void shouldUploadAnArtifact() {
+    public void shouldUploadArtifactAndBuildDetails() {
         Map<String, String> buildProperties = new HashMap() {{ put("a", "b"); }};
         TaskConfig config = taskConfig("test-repo/path/to/artifact.ext", "src/test/resources/artifact.txt", buildProperties);
 
@@ -47,11 +50,16 @@ public class PublishTaskExecutorIntegrationTest {
                 .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
                 .withEnvVar("ARTIFACTORY_USER", "admin")
                 .withEnvVar("ARTIFACTORY_PASSWORD", "password")
+                .withEnvVar("GO_PIPELINE_NAME", "pipeline")
+                .withEnvVar("GO_PIPELINE_COUNTER", "1")
+                .withEnvVar("GO_STAGE_COUNTER", "3")
                 .build();
 
         artifactoryStub.put("/test-repo/path/to/artifact.ext").withContent("content").returns(response(201));
         artifactoryStub.put("/test-repo/path/to/artifact.ext.sha1").withContent("040f06fd774092478d450774f5ba30c5da78acc8").returns(response(201));
         artifactoryStub.put("/test-repo/path/to/artifact.ext.md5").withContent("9a0364b9e99bb480dd25e1f0284c8555").returns(response(201));
+
+        artifactoryStub.put("/api/build").withHeader("Content-Type", "application/vnd.org.jfrog.artifactory+json").returns(response(204));
 
         ExecutionResult result = executor.execute(config, executionContext);
 

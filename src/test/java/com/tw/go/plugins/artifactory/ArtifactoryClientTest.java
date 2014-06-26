@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.truth0.Truth.ASSERT;
 
-public class ArtifactoryClientIntegrationTest {
+public class ArtifactoryClientTest {
 
     private ArtifactoryBuildInfoClient buildInfoClient;
     private ArtifactoryClient client;
