@@ -1,12 +1,20 @@
 package com.tw.go.plugins.artifactory;
 
+import org.jfrog.build.api.Build;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.truth0.Truth;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +50,24 @@ public class ArtifactoryClientIntegrationTest {
         ASSERT.that(deployDetails.getArtifactPath()).is("path/to/artifact.txt");
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
         ASSERT.that(deployDetails.getProperties()).isEqualTo(properties);
+    }
+
+    @Test
+    public void shouldUploadBuildDetails() throws IOException {
+        BuildDetails details = new BuildDetailsBuilder()
+                .buildName("buildName")
+                .buildNumber("1.2")
+                .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
+                .build();
+        client.uploadBuildDetails(details);
+
+        ArgumentCaptor<Build> captor = ArgumentCaptor.forClass(Build.class);
+        verify(buildInfoClient).sendBuildInfo(captor.capture());
+
+        Build build = captor.getValue();
+        ASSERT.that(build.getName()).is("buildName");
+        ASSERT.that(build.getNumber()).is("1.2");
+        ASSERT.that(build.getStarted()).is("2004-12-13T21:39:45.618+0530");
     }
 
     @Test

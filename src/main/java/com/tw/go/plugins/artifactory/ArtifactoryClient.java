@@ -1,8 +1,12 @@
 package com.tw.go.plugins.artifactory;
 
 import com.google.common.base.Splitter;
+import org.jfrog.build.api.Build;
+import org.jfrog.build.api.builder.BuildInfoBuilder;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Closeable;
 import java.io.File;
@@ -34,6 +38,17 @@ public class ArtifactoryClient implements Closeable {
                 .build();
 
         buildInfoClient.deployArtifact(deployDetails);
+    }
+
+    public void uploadBuildDetails(BuildDetails details) throws IOException {
+        DateTimeFormatter format = DateTimeFormat.forPattern(Build.STARTED_FORMAT);
+
+        Build build = new BuildInfoBuilder(details.buildName())
+                .number(details.buildNumber())
+                .started(format.print(details.startedAt()))
+                .build();
+
+        buildInfoClient.sendBuildInfo(build);
     }
 
     @Override
