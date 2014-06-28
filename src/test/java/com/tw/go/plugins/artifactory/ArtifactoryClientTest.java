@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
@@ -27,6 +28,8 @@ public class ArtifactoryClientTest {
 
     private ArtifactoryBuildInfoClient buildInfoClient;
     private ArtifactoryClient client;
+    private Map<String, String> properties = new HashMap<String, String>() {{ put("a", "1"); }};
+
 
     @Before
     public void beforeEach() {
@@ -37,10 +40,9 @@ public class ArtifactoryClientTest {
     @Test
     public void shouldUploadAnArtifact() throws IOException {
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
-        Map<String, String> properties1 = new HashMap<String, String>() {{ put("a", "1"); }};
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
-        artifact.attachProperties(properties1);
+        artifact.attachProperties(properties);
 
         client.uploadArtifact(artifact);
 
@@ -52,16 +54,21 @@ public class ArtifactoryClientTest {
         ASSERT.that(deployDetails.getTargetRepository()).is("repo");
         ASSERT.that(deployDetails.getArtifactPath()).is("path/to/artifact.txt");
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
-        ASSERT.that(deployDetails.getProperties()).isEqualTo(properties1);
+        ASSERT.that(deployDetails.getProperties()).isEqualTo(properties);
     }
 
     @Test
     public void shouldUploadBuildDetails() throws IOException {
+        GoArtifact artifact = new GoArtifact("/a/b", "c/d");
+        artifact.attachProperties(properties);
+
         GoBuildDetails details = new GoBuildDetailsBuilder()
                 .buildName("buildName")
                 .buildNumber("1.2")
                 .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
+                .artifact(artifact)
                 .build();
+
         client.uploadBuildDetails(details);
 
         ArgumentCaptor<Build> captor = ArgumentCaptor.forClass(Build.class);
@@ -71,6 +78,12 @@ public class ArtifactoryClientTest {
         ASSERT.that(build.getName()).is("buildName");
         ASSERT.that(build.getNumber()).is("1.2");
         ASSERT.that(build.getStarted()).is("2004-12-13T21:39:45.618+0530");
+        ASSERT.that(build.getModules().size()).is(1);
+
+        List<Artifact> artifacts = build.getModule("buildName").getArtifacts();
+        ASSERT.that(artifacts).isNotEmpty();
+        ASSERT.that(artifacts.get(0).getName()).is("/a/b");
+        ASSERT.that(artifacts.get(0).getProperties()).hasKey("a").withValue("1");
     }
 
     @Test
