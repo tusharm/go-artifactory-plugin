@@ -5,12 +5,9 @@ import com.thoughtworks.go.plugin.api.task.TaskExecutor;
 import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.executor.PublishTaskExecutor;
 
-import java.util.EnumSet;
 import java.util.List;
 
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.*;
 import static java.util.Arrays.asList;
 
 @Extension

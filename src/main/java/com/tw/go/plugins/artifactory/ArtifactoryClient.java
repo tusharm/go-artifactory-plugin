@@ -1,6 +1,7 @@
 package com.tw.go.plugins.artifactory;
 
-import com.google.common.base.Splitter;
+import com.tw.go.plugins.artifactory.model.GoBuildDetails;
+import com.tw.go.plugins.artifactory.model.GoArtifact;
 import org.jfrog.build.api.Build;
 import org.jfrog.build.api.builder.BuildInfoBuilder;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
@@ -11,8 +12,6 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
@@ -27,20 +26,18 @@ public class ArtifactoryClient implements Closeable {
         this.buildInfoClient = buildInfoClient;
     }
 
-    public void uploadArtifact(String sourcePath, String destinationUri, Map<String, String> properties) throws IOException {
-        List<String> uriSegments = Splitter.on("/").limit(2).splitToList(destinationUri);
-
+    public void uploadArtifact(GoArtifact artifact) throws IOException {
         DeployDetails deployDetails = new DeployDetails.Builder()
-                .targetRepository(uriSegments.get(0))
-                .artifactPath(uriSegments.get(1))
-                .file(new File(sourcePath))
-                .addProperties(properties)
+                .targetRepository(artifact.repository())
+                .artifactPath(artifact.artifactPath())
+                .file(new File(artifact.localPath()))
+                .addProperties(artifact.properties())
                 .build();
 
         buildInfoClient.deployArtifact(deployDetails);
     }
 
-    public void uploadBuildDetails(BuildDetails details) throws IOException {
+    public void uploadBuildDetails(GoBuildDetails details) throws IOException {
         DateTimeFormatter format = DateTimeFormat.forPattern(Build.STARTED_FORMAT);
 
         Build build = new BuildInfoBuilder(details.buildName())

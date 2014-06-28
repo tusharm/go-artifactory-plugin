@@ -1,20 +1,21 @@
 package com.tw.go.plugins.artifactory;
 
+import com.tw.go.plugins.artifactory.model.GoBuildDetails;
+import com.tw.go.plugins.artifactory.model.GoArtifact;
+import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
+import org.jfrog.build.api.Module;
+import org.jfrog.build.api.builder.ArtifactBuilder;
+import org.jfrog.build.api.builder.ModuleBuilder;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.truth0.Truth;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,26 +36,28 @@ public class ArtifactoryClientTest {
 
     @Test
     public void shouldUploadAnArtifact() throws IOException {
-        Map<String, String> properties = new HashMap<String, String>() {{
-            put("a", "b");
-        }};
-
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
-        client.uploadArtifact(sourcePath, "repo/path/to/artifact.txt", properties);
+        Map<String, String> properties1 = new HashMap<String, String>() {{ put("a", "1"); }};
+
+        GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
+        artifact.attachProperties(properties1);
+
+        client.uploadArtifact(artifact);
 
         ArgumentCaptor<DeployDetails> captor = ArgumentCaptor.forClass(DeployDetails.class);
         verify(buildInfoClient).deployArtifact(captor.capture());
 
         DeployDetails deployDetails = captor.getValue();
+
         ASSERT.that(deployDetails.getTargetRepository()).is("repo");
         ASSERT.that(deployDetails.getArtifactPath()).is("path/to/artifact.txt");
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
-        ASSERT.that(deployDetails.getProperties()).isEqualTo(properties);
+        ASSERT.that(deployDetails.getProperties()).isEqualTo(properties1);
     }
 
     @Test
     public void shouldUploadBuildDetails() throws IOException {
-        BuildDetails details = new BuildDetailsBuilder()
+        GoBuildDetails details = new GoBuildDetailsBuilder()
                 .buildName("buildName")
                 .buildNumber("1.2")
                 .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
