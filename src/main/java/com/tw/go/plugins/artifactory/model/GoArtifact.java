@@ -1,13 +1,11 @@
 package com.tw.go.plugins.artifactory.model;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.ImmutableMap.copyOf;
-import static com.google.common.collect.Iterables.skip;
 
 public class GoArtifact {
     private String repository;
@@ -18,9 +16,9 @@ public class GoArtifact {
     public GoArtifact(String localPath, String uri) {
         this.localPath = localPath;
 
-        List<String> segments = Splitter.on("/").omitEmptyStrings().splitToList(uri);
+        List<String> segments = Splitter.on("/").limit(2).omitEmptyStrings().splitToList(uri);
         this.repository = segments.get(0);
-        this.artifactPath = Joiner.on("/").join(skip(segments, 1));
+        this.artifactPath = segments.get(1);
     }
 
     public String localPath() {
