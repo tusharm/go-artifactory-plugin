@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Iterables {
     public static <S, T> Iterable<T> map(Iterable<S> sources, Function<S, T> mapFunction) {
-        List<T> targets = new ArrayList<T>();
+        List<T> targets = new ArrayList();
 
         for (S source : sources) {
             targets.add(mapFunction.apply(source));
