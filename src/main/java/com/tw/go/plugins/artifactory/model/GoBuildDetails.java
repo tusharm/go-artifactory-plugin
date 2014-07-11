@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 
@@ -12,6 +13,7 @@ public class GoBuildDetails {
     private String buildNumber;
     private DateTime startedAt;
     private List<GoArtifact> goArtifacts = new ArrayList<>();
+    private Properties properties;
 
     public GoBuildDetails(String buildName, String buildNumber, DateTime startedAt) {
         this.buildName = buildName;
@@ -37,5 +39,13 @@ public class GoBuildDetails {
 
     public List<GoArtifact> artifacts() {
         return copyOf(goArtifacts);
+    }
+
+    public Properties properties() {
+        return properties;
+    }
+
+    public void properties(Properties properties) {
+        this.properties = properties;
     }
 }

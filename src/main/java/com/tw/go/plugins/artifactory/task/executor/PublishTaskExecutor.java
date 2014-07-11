@@ -11,12 +11,14 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
+import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 
 import java.io.IOException;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
@@ -35,7 +37,7 @@ public class PublishTaskExecutor implements TaskExecutor {
         EnvironmentVariables environment = context.environment();
 
         GoArtifact artifact = artifactFactory.createArtifact(config, context);
-        GoBuildDetails details = buildDetailsFactory.createBuildDetails(environment, asList(artifact));
+        GoBuildDetails details = buildDetailsFactory.createBuildDetails(properties.from(config), environment, asList(artifact));
 
         try (ArtifactoryClient client = createClient(environment)) {
             client.uploadArtifact(artifact);

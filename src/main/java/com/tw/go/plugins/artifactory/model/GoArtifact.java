@@ -11,7 +11,6 @@ public class GoArtifact {
     private String repository;
     private String localPath;
     private String artifactPath;
-    private Map<String, String> properties;
 
     public GoArtifact(String localPath, String uri) {
         this.localPath = localPath;
@@ -31,13 +30,5 @@ public class GoArtifact {
 
     public String artifactPath() {
         return artifactPath;
-    }
-
-    public void attachProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, String> properties() {
-        return copyOf(properties);
     }
 }

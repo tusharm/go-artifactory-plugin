@@ -15,7 +15,7 @@ public class GoArtifactFactoryTest {
 
     @Test
     public void shouldCreateGoArtifact() {
-        TaskConfig config = new TaskConfigBuilder().path("path").uri("repo/path/to/artifact.ext").property("a", "b").build();
+        TaskConfig config = new TaskConfigBuilder().path("path").uri("repo/path/to/artifact.ext").build();
         TaskExecutionContext context = new TaskExecutionContextBuilder().withWorkingDir("pwd").build();
 
         GoArtifact artifact = factory.createArtifact(config, context);
@@ -23,6 +23,5 @@ public class GoArtifactFactoryTest {
         ASSERT.that(artifact.localPath()).is("pwd" + File.separator + "path");
         ASSERT.that(artifact.repository()).is("repo");
         ASSERT.that(artifact.artifactPath()).is("path/to/artifact.ext");
-        ASSERT.that(artifact.properties()).hasKey("a").withValue("b");
     }
 }

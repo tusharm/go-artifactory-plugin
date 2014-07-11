@@ -41,7 +41,6 @@ public class ArtifactoryClient implements Closeable {
                 .targetRepository(artifact.repository())
                 .artifactPath(artifact.artifactPath())
                 .file(new File(artifact.localPath()))
-                .addProperties(artifact.properties())
                 .build();
 
         buildInfoClient.deployArtifact(deployDetails);
@@ -58,6 +57,7 @@ public class ArtifactoryClient implements Closeable {
                 .number(details.buildNumber())
                 .started(forPattern(STARTED_FORMAT).print(details.startedAt()))
                 .addModule(module)
+                .properties(details.properties())
                 .build();
 
         buildInfoClient.sendBuildInfo(build);
@@ -67,12 +67,7 @@ public class ArtifactoryClient implements Closeable {
         return (List<Artifact>) com.tw.go.plugins.artifactory.utils.Iterables.map(goArtifacts, new Function<GoArtifact, Artifact>() {
             @Override
             public Artifact apply(GoArtifact goArtifact) {
-                Properties properties = new Properties();
-                properties.putAll(goArtifact.properties());
-
-                return new ArtifactBuilder(goArtifact.localPath())
-                        .properties(properties)
-                        .build();
+                return new ArtifactBuilder(goArtifact.localPath()).build();
             }
         });
     }

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
@@ -17,6 +18,10 @@ public class GoBuildDetailsFactoryTest {
         put("GO_PIPELINE_NAME", "pipeline");
         put("GO_PIPELINE_COUNTER", "pipelineCounter");
         put("GO_STAGE_COUNTER", "stageCounter");
+    }};
+
+    private Map<String, String> buildProperties = new HashMap() {{
+        put("buildUrl", "http://go:8153/blah");
     }};
 
     private EnvironmentVariables environment;
@@ -32,10 +37,11 @@ public class GoBuildDetailsFactoryTest {
         GoBuildDetailsFactory factory = new GoBuildDetailsFactory();
 
         GoArtifact artifact = new GoArtifact("path", "uri/path");
-        GoBuildDetails details = factory.createBuildDetails(environment, asList(artifact));
+        GoBuildDetails details = factory.createBuildDetails(buildProperties, environment, asList(artifact));
 
         ASSERT.that(details.artifacts()).has().exactly(artifact);
         ASSERT.that(details.buildName()).is("pipeline");
         ASSERT.that(details.buildNumber()).is("pipelineCounter.stageCounter");
+        ASSERT.that(details.properties()).hasKey("buildUrl").withValue("http://go:8153/blah");
     }
 }

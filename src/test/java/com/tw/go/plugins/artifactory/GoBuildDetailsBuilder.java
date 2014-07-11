@@ -4,6 +4,8 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.joda.time.DateTime;
 
+import java.util.Properties;
+
 import static java.util.Arrays.asList;
 
 public class GoBuildDetailsBuilder {
@@ -11,10 +13,12 @@ public class GoBuildDetailsBuilder {
     private String buildNumber;
     private DateTime startedAt;
     private GoArtifact artifact;
+    private Properties properties;
 
     public GoBuildDetails build() {
         GoBuildDetails buildDetails = new GoBuildDetails(buildName, buildNumber, startedAt);
         buildDetails.artifacts(asList(artifact));
+        buildDetails.properties(properties);
         return buildDetails;
     }
 
@@ -35,6 +39,11 @@ public class GoBuildDetailsBuilder {
 
     public GoBuildDetailsBuilder artifact(GoArtifact artifact) {
         this.artifact = artifact;
+        return this;
+    }
+
+    public GoBuildDetailsBuilder properties(Properties properties) {
+        this.properties = properties;
         return this;
     }
 }

@@ -13,9 +13,6 @@ public class GoArtifactFactory {
         String path = ConfigElement.path.from(config);
         String uri = ConfigElement.uri.from(config);
 
-        GoArtifact artifact = new GoArtifact(workingDir + File.separator + path, uri);
-        artifact.attachProperties(ConfigElement.properties.from(config));
-
-        return artifact;
+        return new GoArtifact(workingDir + File.separator + path, uri);
     }
 }
