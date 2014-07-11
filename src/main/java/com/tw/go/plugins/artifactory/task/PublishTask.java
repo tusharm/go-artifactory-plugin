@@ -3,6 +3,7 @@ package com.tw.go.plugins.artifactory.task;
 import com.thoughtworks.go.plugin.api.annotation.Extension;
 import com.thoughtworks.go.plugin.api.task.TaskExecutor;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
+import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.executor.PublishTaskExecutor;
 
@@ -25,7 +26,7 @@ public class PublishTask extends GenericTask {
     @Override
     public TaskExecutor executor() {
         GoArtifactFactory artifactFactory = new GoArtifactFactory();
-        return new PublishTaskExecutor(artifactFactory);
+        return new PublishTaskExecutor(artifactFactory, new GoBuildDetailsFactory());
     }
 
     @Override

@@ -6,14 +6,12 @@ import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.thoughtworks.webstub.StubServerFacade;
 import com.thoughtworks.webstub.dsl.HttpDsl;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
+import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
@@ -38,7 +36,7 @@ public class PublishTaskExecutorIntegrationTest {
         artifactoryStub.reset();
         artifactoryStub.get("/api/system/version").returns(response(200).withContent("{ \"version\" : \"3.2.1.1\" }"));
 
-        executor = new PublishTaskExecutor(new GoArtifactFactory());
+        executor = new PublishTaskExecutor(new GoArtifactFactory(), new GoBuildDetailsFactory());
     }
 
     @Test
