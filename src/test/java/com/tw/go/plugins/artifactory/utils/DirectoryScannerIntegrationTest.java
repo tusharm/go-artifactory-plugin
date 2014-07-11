@@ -1,9 +1,8 @@
 package com.tw.go.plugins.artifactory.utils;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.truth0.Truth;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,13 +13,12 @@ import java.util.List;
 import static org.truth0.Truth.ASSERT;
 
 public class DirectoryScannerIntegrationTest {
-    private static Path rootDir;
-    private static Path subDir;
+    private Path rootDir;
+    private Path subDir;
+    private DirectoryScanner directoryScanner;
 
-    private static DirectoryScanner directoryScanner;
-
-    @BeforeClass
-    public static void beforeAll() throws IOException {
+    @Before
+    public  void beforeEach() throws IOException {
         rootDir = Files.createTempDirectory(null);
         subDir = Files.createTempDirectory(rootDir, null);
 
@@ -28,13 +26,24 @@ public class DirectoryScannerIntegrationTest {
     }
 
     @Test
-    public void shouldReturnAlLFiles() throws IOException {
+    public void shouldReturnFileGivenItsName() throws IOException {
+        Path testFile = Files.createTempFile(rootDir, "Test", ".java");
+        String testFileName = testFile.getFileName().toString();
+
+        List<File> files = directoryScanner.scan(testFileName);
+
+        ASSERT.that(files).has().exactly(testFile.toFile());
+    }
+
+    @Test
+    public void shouldReturnMultipleFiles() throws IOException {
         Path temp1 = Files.createTempFile(rootDir, null, ".java");
         Path temp2 = Files.createTempFile(rootDir, null, ".java");
+        Path temp3 = Files.createTempFile(subDir, null, ".class");
 
-        List<File> files = directoryScanner.scan("*");
+        List<File> files = directoryScanner.scan("**");
 
-        ASSERT.that(files).has().exactly(temp1.toFile(), temp2.toFile());
+        ASSERT.that(files).has().exactly(temp1.toFile(), temp2.toFile(), temp3.toFile());
     }
 
     @Test
@@ -48,8 +57,8 @@ public class DirectoryScannerIntegrationTest {
         ASSERT.that(files).has().exactly(temp.toFile());
     }
 
-    @AfterClass
-    public static void afterAll() throws IOException {
+    @After
+    public void afterEach() throws IOException {
         FileUtils.deleteDirectory(rootDir.toFile());
     }
 }

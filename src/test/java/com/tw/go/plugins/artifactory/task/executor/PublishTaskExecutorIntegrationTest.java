@@ -5,6 +5,8 @@ import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.thoughtworks.webstub.StubServerFacade;
 import com.thoughtworks.webstub.dsl.HttpDsl;
+import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
+import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,7 +19,6 @@ import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
 import static java.lang.String.format;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.truth0.Truth.ASSERT;
 
 public class PublishTaskExecutorIntegrationTest {
@@ -37,13 +38,16 @@ public class PublishTaskExecutorIntegrationTest {
         artifactoryStub.reset();
         artifactoryStub.get("/api/system/version").returns(response(200).withContent("{ \"version\" : \"3.2.1.1\" }"));
 
-        executor = new PublishTaskExecutor();
+        executor = new PublishTaskExecutor(new GoArtifactFactory());
     }
 
     @Test
     public void shouldUploadArtifactAndBuildDetails() {
-        Map<String, String> buildProperties = new HashMap() {{ put("a", "b"); }};
-        TaskConfig config = taskConfig("test-repo/path/to/artifact.ext", "src/test/resources/artifact.txt", buildProperties);
+        TaskConfig config = new TaskConfigBuilder()
+                .uri("test-repo/path/to/artifact.ext")
+                .path("src/test/resources/artifact.txt")
+                .property("a", "b")
+                .build();
 
         TaskExecutionContext executionContext =
                 new TaskExecutionContextBuilder().withWorkingDir(System.getProperty("user.dir"))
@@ -69,18 +73,5 @@ public class PublishTaskExecutorIntegrationTest {
     @AfterClass
     public static void afterAll() {
         server.stop();
-    }
-
-    private TaskConfig taskConfig(String artifactUri, String artifactPath, Map<String, String> buildProperties) {
-        TaskConfig config = mock(TaskConfig.class);
-        when(config.getValue("uri")).thenReturn(artifactUri);
-        when(config.getValue("path")).thenReturn(artifactPath);
-
-        StringBuilder props = new StringBuilder();
-        for (String key : buildProperties.keySet()) {
-            props.append(format("%s=%s\n", key, buildProperties.get(key)));
-        }
-        when(config.getValue("properties")).thenReturn(props.toString());
-        return config;
     }
 }

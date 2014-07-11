@@ -8,26 +8,30 @@ import com.thoughtworks.go.plugin.api.task.TaskExecutor;
 import com.tw.go.plugins.artifactory.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
+import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.joda.time.DateTime;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 public class PublishTaskExecutor implements TaskExecutor {
     private Logger logger = Logger.getLogger(getClass());
+    private GoArtifactFactory artifactFactory;
+
+    public PublishTaskExecutor(GoArtifactFactory factory) {
+        this.artifactFactory = factory;
+    }
 
     @Override
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
-        GoArtifact artifact = createArtifact(config, context.workingDir());
+        GoArtifact artifact = artifactFactory.createArtifact(config, context);
 
         EnvironmentVariables environment = context.environment();
         try (ArtifactoryClient client = createClient(environment)) {
@@ -43,14 +47,6 @@ public class PublishTaskExecutor implements TaskExecutor {
         }
 
         return success(format("Successfully published artifact [%s]", artifact.localPath()));
-    }
-
-    private GoArtifact createArtifact(TaskConfig config, String workingDir) {
-        String artifactFullPath = workingDir + File.separator + path.from(config);
-        GoArtifact artifact = new GoArtifact(artifactFullPath, uri.from(config));
-        artifact.attachProperties(properties.from(config));
-
-        return artifact;
     }
 
     private ArtifactoryClient createClient(EnvironmentVariables environment) {
