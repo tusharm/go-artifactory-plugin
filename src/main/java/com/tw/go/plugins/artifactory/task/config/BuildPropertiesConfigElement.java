@@ -12,12 +12,12 @@ public class BuildPropertiesConfigElement extends ConfigElement<Map<String, Stri
 
     @Override
     protected boolean isValid(String value) {
-        return value.matches("[^=]+=[^=]+((\n)+[^=]+=[^=]+)*(\n)*");
+        return value.matches("[^=]+=[^=]+((\\s)+[^=]+=[^=]+)*(\\s)*");
     }
 
     @Override
     public Map<String, String> from(TaskConfig taskConfig) {
         String propertiesString = taskConfig.getValue(name());
-        return Splitter.on("\n").omitEmptyStrings().withKeyValueSeparator("=").split(propertiesString);
+        return Splitter.on("\n").trimResults().omitEmptyStrings().withKeyValueSeparator("=").split(propertiesString);
     }
 }

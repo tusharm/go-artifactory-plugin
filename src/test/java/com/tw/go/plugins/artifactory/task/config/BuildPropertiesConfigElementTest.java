@@ -26,7 +26,7 @@ public class BuildPropertiesConfigElementTest {
     @Test
     public void shouldReturnPropertiesAsMap() {
         TaskConfig taskConfig = new TaskConfig();
-        taskConfig.add(new TaskConfigProperty("properties", "a=b\n\nc=d\n"));
+        taskConfig.add(new TaskConfigProperty("properties", "a=b\n\nc=d \n\n\n"));
         Map<String, String> propertiesMap = properties.from(taskConfig);
 
         ASSERT.that(propertiesMap).hasKey("a").withValue("b");
