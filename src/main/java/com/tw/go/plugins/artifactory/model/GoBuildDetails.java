@@ -3,6 +3,7 @@ package com.tw.go.plugins.artifactory.model;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,7 +34,7 @@ public class GoBuildDetails {
         return startedAt;
     }
 
-    public void artifacts(List<GoArtifact> artifacts) {
+    public void artifacts(Collection<GoArtifact> artifacts) {
         goArtifacts = copyOf(artifacts);
     }
 

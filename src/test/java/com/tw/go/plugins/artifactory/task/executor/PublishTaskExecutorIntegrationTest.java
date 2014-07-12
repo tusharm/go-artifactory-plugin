@@ -15,8 +15,6 @@ import org.junit.Test;
 
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
-import static java.lang.String.format;
-import static org.mockito.Mockito.mock;
 import static org.truth0.Truth.ASSERT;
 
 public class PublishTaskExecutorIntegrationTest {
@@ -49,13 +47,13 @@ public class PublishTaskExecutorIntegrationTest {
 
         TaskExecutionContext executionContext =
                 new TaskExecutionContextBuilder().withWorkingDir(System.getProperty("user.dir"))
-                .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
-                .withEnvVar("ARTIFACTORY_USER", "admin")
-                .withEnvVar("ARTIFACTORY_PASSWORD", "password")
-                .withEnvVar("GO_PIPELINE_NAME", "pipeline")
-                .withEnvVar("GO_PIPELINE_COUNTER", "1")
-                .withEnvVar("GO_STAGE_COUNTER", "3")
-                .build();
+                        .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
+                        .withEnvVar("ARTIFACTORY_USER", "admin")
+                        .withEnvVar("ARTIFACTORY_PASSWORD", "password")
+                        .withEnvVar("GO_PIPELINE_NAME", "pipeline")
+                        .withEnvVar("GO_PIPELINE_COUNTER", "1")
+                        .withEnvVar("GO_STAGE_COUNTER", "3")
+                        .build();
 
         artifactoryStub.put("/test-repo/path/to/artifact.ext").withContent("content").returns(response(201));
         artifactoryStub.put("/test-repo/path/to/artifact.ext.sha1").withContent("040f06fd774092478d450774f5ba30c5da78acc8").returns(response(201));

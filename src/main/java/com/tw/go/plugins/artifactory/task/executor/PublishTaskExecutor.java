@@ -11,16 +11,15 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
-import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 
 public class PublishTaskExecutor implements TaskExecutor {
     private Logger logger = Logger.getLogger(getClass());
@@ -36,17 +35,16 @@ public class PublishTaskExecutor implements TaskExecutor {
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
         EnvironmentVariables environment = context.environment();
 
-        GoArtifact artifact = artifactFactory.createArtifact(config, context);
-        GoBuildDetails details = buildDetailsFactory.createBuildDetails(properties.from(config), environment, asList(artifact));
+        Collection<GoArtifact> artifacts = artifactFactory.createArtifacts(config, context);
+        GoBuildDetails details = buildDetailsFactory.createBuildDetails(properties.from(config), environment, artifacts);
 
         try (ArtifactoryClient client = createClient(environment)) {
-            client.uploadArtifact(artifact);
+            client.uploadArtifacts(artifacts);
             client.uploadBuildDetails(details);
 
-            return success(format("Successfully published artifact [%s]", artifact.localPath()));
-        }
-        catch (IOException e) {
-            String message = format("Failed to publish artifact [%s]", artifact.localPath());
+            return success(format("Successfully published artifact [%s]", artifacts));
+        } catch (IOException e) {
+            String message = format("Failed to publish one or more artifact [%s]", artifacts);
             logger.error(message, e);
             return failure(format("%s: %s", message, e.getMessage()));
         }

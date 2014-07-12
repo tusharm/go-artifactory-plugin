@@ -1,12 +1,9 @@
 package com.tw.go.plugins.artifactory;
 
-import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
+import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
-import org.jfrog.build.api.Module;
-import org.jfrog.build.api.builder.ArtifactBuilder;
-import org.jfrog.build.api.builder.ModuleBuilder;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
@@ -16,11 +13,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.truth0.Truth.ASSERT;
@@ -43,7 +39,7 @@ public class ArtifactoryClientTest {
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
 
-        client.uploadArtifact(artifact);
+        client.uploadArtifacts(asList(artifact));
 
         ArgumentCaptor<DeployDetails> captor = ArgumentCaptor.forClass(DeployDetails.class);
         verify(buildInfoClient).deployArtifact(captor.capture());

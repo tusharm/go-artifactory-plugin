@@ -1,11 +1,11 @@
 package com.tw.go.plugins.artifactory.model;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.google.common.collect.ImmutableMap.copyOf;
+import static java.lang.String.format;
 
 public class GoArtifact {
     private String repository;
@@ -30,5 +30,32 @@ public class GoArtifact {
 
     public String artifactPath() {
         return artifactPath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GoArtifact)) return false;
+
+        GoArtifact artifact = (GoArtifact) o;
+
+        return artifactPath.equals(artifact.artifactPath)
+                && localPath.equals(artifact.localPath)
+                && repository.equals(artifact.repository);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = repository.hashCode();
+        result = 31 * result + localPath.hashCode();
+        result = 31 * result + artifactPath.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("path", localPath)
+                .add("uri", format("%s/%s", repository, artifactPath))
+                .toString();
     }
 }

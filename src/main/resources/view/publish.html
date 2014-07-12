@@ -1,18 +1,26 @@
 <div class="form_item_block">
     <label>Artifactory URI:<span class="asterisk">*</span></label>
     <input type="text" ng-model="uri"/>
-    <div class="inline_instruction">e.g. repo-key/path/to/artifact</div>
+
+    <div class="inline_instruction">e.g. repo-key/path/to/artifact (or repo-key/dir if there are multiple artifacts)
+    </div>
     <span class="form_error" ng-show="GOINPUTNAME[uri].$error.server">{{ GOINPUTNAME[uri].$error.server }}</span>
 </div>
 <div class="form_item_block">
     <label>Artifact Path:<span class="asterisk">*</span></label>
     <input type="text" ng-model="path"/>
-    <div class="inline_instruction">Relative to working directory</div>
+
+    <div class="inline_instruction">Relative to working directory (<a
+            href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)">globs</a>
+        are allowed)
+    </div>
     <span class="form_error" ng-show="GOINPUTNAME[path].$error.server">{{ GOINPUTNAME[path].$error.server }}</span>
 </div>
 <div class="form_item_block">
     <label>Build properties:</label>
     <textarea class="form_input code_text" cols="50" rows="5" wrap="off" ng-model="properties"></textarea>
+
     <div class="inline_instruction">A key=value pair on each line</div>
-    <span class="form_error" ng-show="GOINPUTNAME[properties].$error.server">{{ GOINPUTNAME[properties].$error.server }}</span>
+    <span class="form_error"
+          ng-show="GOINPUTNAME[properties].$error.server">{{ GOINPUTNAME[properties].$error.server }}</span>
 </div>
