@@ -50,6 +50,7 @@ public class PublishTaskExecutorIntegrationTest {
                         .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
                         .withEnvVar("ARTIFACTORY_USER", "admin")
                         .withEnvVar("ARTIFACTORY_PASSWORD", "password")
+                        .withEnvVar("GO_SERVER_URL", "http://localhost:8153/go")
                         .withEnvVar("GO_PIPELINE_NAME", "pipeline")
                         .withEnvVar("GO_PIPELINE_COUNTER", "1")
                         .withEnvVar("GO_STAGE_COUNTER", "3")

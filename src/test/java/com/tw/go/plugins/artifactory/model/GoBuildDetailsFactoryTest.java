@@ -18,6 +18,7 @@ public class GoBuildDetailsFactoryTest {
         put("GO_PIPELINE_NAME", "pipeline");
         put("GO_PIPELINE_COUNTER", "pipelineCounter");
         put("GO_STAGE_COUNTER", "stageCounter");
+        put("GO_SERVER_URL", "https://localhost:8154/go/");
     }};
 
     private Map<String, String> buildProperties = new HashMap() {{
@@ -43,5 +44,6 @@ public class GoBuildDetailsFactoryTest {
         ASSERT.that(details.buildName()).is("pipeline");
         ASSERT.that(details.buildNumber()).is("pipelineCounter.stageCounter");
         ASSERT.that(details.properties()).hasKey("buildUrl").withValue("http://go:8153/blah");
+        ASSERT.that(details.url()).is("https://localhost:8154/go/pipelines/value_stream_map/pipeline/pipelineCounter");
     }
 }

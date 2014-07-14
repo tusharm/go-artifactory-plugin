@@ -50,6 +50,7 @@ public class ArtifactoryClient implements Closeable {
                 .build();
 
         Build build = new BuildInfoBuilder(details.buildName())
+                .url(details.url())
                 .number(details.buildNumber())
                 .started(forPattern(STARTED_FORMAT).print(details.startedAt()))
                 .addModule(module)

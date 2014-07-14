@@ -10,24 +10,25 @@ import java.util.Properties;
 import static com.google.common.collect.ImmutableList.copyOf;
 
 public class GoBuildDetails {
-    private String buildName;
-    private String buildNumber;
+    private String name;
+    private String number;
+    private String url;
     private DateTime startedAt;
     private List<GoArtifact> goArtifacts = new ArrayList<>();
     private Properties properties;
 
-    public GoBuildDetails(String buildName, String buildNumber, DateTime startedAt) {
-        this.buildName = buildName;
-        this.buildNumber = buildNumber;
+    public GoBuildDetails(String name, String number, DateTime startedAt) {
+        this.name = name;
+        this.number = number;
         this.startedAt = startedAt;
     }
 
     public String buildName() {
-        return buildName;
+        return name;
     }
 
     public String buildNumber() {
-        return buildNumber;
+        return number;
     }
 
     public DateTime startedAt() {
@@ -48,5 +49,13 @@ public class GoBuildDetails {
 
     public void properties(Properties properties) {
         this.properties = properties;
+    }
+
+    public String url() {
+        return url;
+    }
+
+    public void url(String url) {
+        this.url = url;
     }
 }

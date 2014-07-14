@@ -64,6 +64,7 @@ public class ArtifactoryClientTest {
                 .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
                 .artifact(artifact)
                 .properties(buildProperties)
+                .url("http://google.com")
                 .build();
 
         client.uploadBuildDetails(details);
@@ -73,6 +74,7 @@ public class ArtifactoryClientTest {
 
         Build build = captor.getValue();
         ASSERT.that(build.getName()).is("buildName");
+        ASSERT.that(build.getUrl()).is("http://google.com");
         ASSERT.that(build.getNumber()).is("1.2");
         ASSERT.that(build.getStarted()).is("2004-12-13T21:39:45.618+0530");
         ASSERT.that(build.getModules().size()).is(1);

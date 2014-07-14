@@ -5,12 +5,13 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
-import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.ARTIFACTORY_URL;
+import static com.tw.go.plugins.artifactory.task.EnvironmentData.ARTIFACTORY_URL;
+import static com.tw.go.plugins.artifactory.task.EnvironmentData.PIPELINE_VALUESTREAM_URL;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.truth0.Truth.ASSERT;
 
-public class EnvironmentVariableTest {
+public class EnvironmentDataTest {
     @Test
     public void shouldReturnEnvironmentVariableValue() {
         EnvironmentVariables environmentVariables = asEnvVars(new HashMap<String, String>() {{
@@ -24,6 +25,19 @@ public class EnvironmentVariableTest {
     public void shouldThrowExceptionIfEnvironmentVariableIsMissing() {
         EnvironmentVariables environmentVariables = asEnvVars(new HashMap<String, String>());
         ARTIFACTORY_URL.from(environmentVariables);
+    }
+
+    @Test
+    public void shouldReturnValueStreamUrlForThePipeline() {
+        EnvironmentVariables environmentVariables = asEnvVars(new HashMap<String, String>() {{
+            put("GO_SERVER_URL", "http://go.server:8153/go/");
+            put("GO_PIPELINE_NAME", "name");
+            put("GO_PIPELINE_COUNTER", "23");
+        }});
+
+        ASSERT.that(PIPELINE_VALUESTREAM_URL.from(environmentVariables))
+                .is("http://go.server:8153/go/pipelines/value_stream_map/name/23");
+
     }
 
     private EnvironmentVariables asEnvVars(HashMap<String, String> envVars) {

@@ -17,7 +17,7 @@ import java.util.Collection;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
-import static com.tw.go.plugins.artifactory.task.EnvironmentVariable.*;
+import static com.tw.go.plugins.artifactory.task.EnvironmentData.*;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
 import static java.lang.String.format;
 
@@ -33,9 +33,9 @@ public class PublishTaskExecutor implements TaskExecutor {
 
     @Override
     public ExecutionResult execute(TaskConfig config, TaskExecutionContext context) {
-        EnvironmentVariables environment = context.environment();
-
         Collection<GoArtifact> artifacts = artifactFactory.createArtifacts(config, context);
+
+        EnvironmentVariables environment = context.environment();
         GoBuildDetails details = buildDetailsFactory.createBuildDetails(properties.from(config), environment, artifacts);
 
         try (ArtifactoryClient client = createClient(environment)) {
