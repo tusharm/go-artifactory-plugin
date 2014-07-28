@@ -18,8 +18,10 @@ The plugin requires these environment variables to be set for the Go task
 #### Global configuration
 ![](images/artifactory_config.png?raw=true)
 
+
 #### Artifactory task 
 ![](images/artifactory_task.png?raw=true)
+
 
 #### Task level configuration 
 ![](images/task_config.png?raw=true)
