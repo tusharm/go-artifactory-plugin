@@ -15,12 +15,14 @@ The plugin requires these environment variables to be set for the Go task
 
 ### Screenshots
 
-![Global configuration](images/artifactory_config.png?raw=true)
+#### Global configuration
+![](images/artifactory_config.png?raw=true)
 
-![Artifactory task](images/artifactory_task.png?raw=true)
+#### Artifactory task 
+![](images/artifactory_task.png?raw=true)
 
-![Task level configuration](images/task_config.png?raw=true)
-
+#### Task level configuration 
+![](images/task_config.png?raw=true)
 
 ### Get involved
 
@@ -30,5 +32,5 @@ The plugin requires these environment variables to be set for the Go task
 
 ### License
 
-WebStub is distributed under the terms of Apache Software License v2.0: http://www.apache.org/licenses/LICENSE-2.0.html
+Go Artifactory Plugin is distributed under the terms of Apache Software License v2.0: http://www.apache.org/licenses/LICENSE-2.0.html
 
