@@ -1,10 +1,7 @@
 package com.tw.go.plugins.artifactory.task.executor;
 
 import com.thoughtworks.go.plugin.api.response.execution.ExecutionResult;
-import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
-import com.thoughtworks.go.plugin.api.task.TaskConfig;
-import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
-import com.thoughtworks.go.plugin.api.task.TaskExecutor;
+import com.thoughtworks.go.plugin.api.task.*;
 import com.tw.go.plugins.artifactory.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
@@ -39,11 +36,14 @@ public class PublishTaskExecutor implements TaskExecutor {
         EnvironmentVariables environment = context.environment();
         GoBuildDetails details = buildDetailsFactory.createBuildDetails(buildProperties.from(config), environment, artifacts);
 
+        Console console = context.console();
         try (ArtifactoryClient client = createClient(environment)) {
             client.uploadArtifacts(artifacts);
             client.uploadBuildDetails(details);
 
-            return success(format("Successfully published artifact [%s]", artifacts));
+            // TODO: this message should be arg to success() but currently it is not working; possibly a Go fix?
+            console.printLine(format("Successfully published artifacts:\n%s", asString(artifacts)));
+            return success("");
         }
         catch (IOException|NoSuchAlgorithmException e) {
             String message = format("Failed to publish one or more artifact [%s]", artifacts);
@@ -58,6 +58,14 @@ public class PublishTaskExecutor implements TaskExecutor {
         String password = ARTIFACTORY_PASSWORD.from(environment);
 
         return new ArtifactoryClient(url, user, password);
+    }
+
+    private String asString(Collection<GoArtifact> artifacts) {
+        StringBuilder result = new StringBuilder();
+        for (GoArtifact artifact : artifacts) {
+            result.append(artifact).append("\n");
+        }
+        return result.toString();
     }
 
 }

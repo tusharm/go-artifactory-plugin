@@ -1,5 +1,6 @@
 package com.tw.go.plugins.artifactory.task.executor;
 
+import com.thoughtworks.go.plugin.api.task.Console;
 import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 
@@ -29,6 +30,9 @@ public class TaskExecutionContextBuilder {
         TaskExecutionContext context = mock(TaskExecutionContext.class);
         when(context.environment()).thenReturn(environmentVariables);
         when(context.workingDir()).thenReturn(workingDir);
+
+        Console console = mock(Console.class);
+        when(context.console()).thenReturn(console);
 
         return context;
     }
