@@ -1,6 +1,7 @@
 package com.tw.go.plugins.artifactory.model;
 
 import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
+import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,16 +22,16 @@ public class GoBuildDetailsFactoryTest {
         put("GO_SERVER_URL", "https://localhost:8154/go/");
     }};
 
-    private Map<String, String> buildProperties = new HashMap() {{
-        put("buildUrl", "http://go:8153/blah");
-    }};
-
     private EnvironmentVariables environment;
+    private TaskConfig taskConfig;
 
     @Before
     public void beforeEach() {
         environment = mock(EnvironmentVariables.class);
         when(environment.asMap()).thenReturn(envVars);
+
+        taskConfig = mock(TaskConfig.class);
+        when(taskConfig.getValue("properties")).thenReturn("buildUrl=http://go:8153/blah");
     }
 
     @Test
@@ -38,7 +39,7 @@ public class GoBuildDetailsFactoryTest {
         GoBuildDetailsFactory factory = new GoBuildDetailsFactory();
 
         GoArtifact artifact = new GoArtifact("path", "uri/path");
-        GoBuildDetails details = factory.createBuildDetails(buildProperties, environment, asList(artifact));
+        GoBuildDetails details = factory.createBuildDetails(taskConfig, environment, asList(artifact));
 
         ASSERT.that(details.artifacts()).has().exactly(artifact);
         ASSERT.that(details.buildName()).is("pipeline");

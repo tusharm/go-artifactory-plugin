@@ -34,7 +34,7 @@ public class PublishTaskExecutor implements TaskExecutor {
         Collection<GoArtifact> artifacts = artifactFactory.createArtifacts(config, context);
 
         EnvironmentVariables environment = context.environment();
-        GoBuildDetails details = buildDetailsFactory.createBuildDetails(buildProperties.from(config), environment, artifacts);
+        GoBuildDetails details = buildDetailsFactory.createBuildDetails(config, environment, artifacts);
 
         Console console = context.console();
         try (ArtifactoryClient client = createClient(environment)) {
