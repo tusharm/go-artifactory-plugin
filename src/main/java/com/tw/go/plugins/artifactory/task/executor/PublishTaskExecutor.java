@@ -13,12 +13,13 @@ import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentData.*;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.properties;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.buildProperties;
 import static java.lang.String.format;
 
 public class PublishTaskExecutor implements TaskExecutor {
@@ -36,14 +37,15 @@ public class PublishTaskExecutor implements TaskExecutor {
         Collection<GoArtifact> artifacts = artifactFactory.createArtifacts(config, context);
 
         EnvironmentVariables environment = context.environment();
-        GoBuildDetails details = buildDetailsFactory.createBuildDetails(properties.from(config), environment, artifacts);
+        GoBuildDetails details = buildDetailsFactory.createBuildDetails(buildProperties.from(config), environment, artifacts);
 
         try (ArtifactoryClient client = createClient(environment)) {
             client.uploadArtifacts(artifacts);
             client.uploadBuildDetails(details);
 
             return success(format("Successfully published artifact [%s]", artifacts));
-        } catch (IOException e) {
+        }
+        catch (IOException|NoSuchAlgorithmException e) {
             String message = format("Failed to publish one or more artifact [%s]", artifacts);
             logger.error(message, e);
             return failure(format("%s: %s", message, e.getMessage()));

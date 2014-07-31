@@ -4,6 +4,7 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
+import org.jfrog.build.api.util.FileChecksumCalculator;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,7 +36,7 @@ public class ArtifactoryClientTest {
     }
 
     @Test
-    public void shouldUploadAnArtifact() throws IOException {
+    public void shouldUploadAnArtifact() throws IOException, NoSuchAlgorithmException {
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
@@ -49,6 +51,8 @@ public class ArtifactoryClientTest {
         ASSERT.that(deployDetails.getTargetRepository()).is("repo");
         ASSERT.that(deployDetails.getArtifactPath()).is("path/to/artifact.txt");
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
+        ASSERT.that(deployDetails.getSha1()).is("040f06fd774092478d450774f5ba30c5da78acc8");
+        ASSERT.that(deployDetails.getMd5()).is("9a0364b9e99bb480dd25e1f0284c8555");
     }
 
     @Test

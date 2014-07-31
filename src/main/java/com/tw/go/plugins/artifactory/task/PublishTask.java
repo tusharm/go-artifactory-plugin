@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
 public class PublishTask extends GenericTask {
 
     public PublishTask() {
-        this(asList(uri, path, properties));
+        this(asList(uri, path, buildProperties));
     }
 
     public PublishTask(List<ConfigElement<?>> configs) {
