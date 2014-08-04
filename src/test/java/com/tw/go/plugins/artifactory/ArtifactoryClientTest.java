@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -40,6 +41,7 @@ public class ArtifactoryClientTest {
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
+        artifact.properties(new HashMap<String, String>() {{ put("name", "value"); }});
 
         client.uploadArtifacts(asList(artifact));
 
@@ -53,13 +55,11 @@ public class ArtifactoryClientTest {
         ASSERT.that(deployDetails.getFile().getAbsolutePath()).is(sourcePath);
         ASSERT.that(deployDetails.getSha1()).is("040f06fd774092478d450774f5ba30c5da78acc8");
         ASSERT.that(deployDetails.getMd5()).is("9a0364b9e99bb480dd25e1f0284c8555");
+        ASSERT.that(deployDetails.getProperties()).hasKey("name").withValue("value");
     }
 
     @Test
     public void shouldUploadBuildDetails() throws IOException {
-        Properties buildProperties = new Properties();
-        buildProperties.put("a", "b");
-
         GoArtifact artifact = new GoArtifact("/a/b", "c/d");
 
         GoBuildDetails details = new GoBuildDetailsBuilder()
@@ -67,7 +67,6 @@ public class ArtifactoryClientTest {
                 .buildNumber("1.2")
                 .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
                 .artifact(artifact)
-                .properties(buildProperties)
                 .url("http://google.com")
                 .build();
 
@@ -82,7 +81,6 @@ public class ArtifactoryClientTest {
         ASSERT.that(build.getNumber()).is("1.2");
         ASSERT.that(build.getStarted()).is("2004-12-13T21:39:45.618+0530");
         ASSERT.that(build.getModules().size()).is(1);
-        ASSERT.that(build.getProperties()).is(buildProperties);
 
 
         List<Artifact> artifacts = build.getModule("buildName").getArtifacts();

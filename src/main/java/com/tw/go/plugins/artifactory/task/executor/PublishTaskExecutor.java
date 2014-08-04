@@ -16,7 +16,6 @@ import java.util.Collection;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.failure;
 import static com.thoughtworks.go.plugin.api.response.execution.ExecutionResult.success;
 import static com.tw.go.plugins.artifactory.task.EnvironmentData.*;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.buildProperties;
 import static java.lang.String.format;
 
 public class PublishTaskExecutor implements TaskExecutor {
@@ -34,7 +33,7 @@ public class PublishTaskExecutor implements TaskExecutor {
         Collection<GoArtifact> artifacts = artifactFactory.createArtifacts(config, context);
 
         EnvironmentVariables environment = context.environment();
-        GoBuildDetails details = buildDetailsFactory.createBuildDetails(config, environment, artifacts);
+        GoBuildDetails details = buildDetailsFactory.createBuildDetails(environment, artifacts);
 
         Console console = context.console();
         try (ArtifactoryClient client = createClient(environment)) {
@@ -45,7 +44,7 @@ public class PublishTaskExecutor implements TaskExecutor {
             console.printLine(format("Successfully published artifacts:\n%s", asString(artifacts)));
             return success("");
         }
-        catch (IOException|NoSuchAlgorithmException e) {
+        catch (IOException | NoSuchAlgorithmException e) {
             String message = format("Failed to publish one or more artifact [%s]", artifacts);
             logger.error(message, e);
             return failure(format("%s: %s", message, e.getMessage()));

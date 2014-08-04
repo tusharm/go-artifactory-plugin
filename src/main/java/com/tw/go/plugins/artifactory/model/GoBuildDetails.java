@@ -15,7 +15,6 @@ public class GoBuildDetails {
     private String url;
     private DateTime startedAt;
     private List<GoArtifact> goArtifacts = new ArrayList<>();
-    private Properties properties;
 
     public GoBuildDetails(String name, String number, DateTime startedAt) {
         this.name = name;
@@ -41,14 +40,6 @@ public class GoBuildDetails {
 
     public List<GoArtifact> artifacts() {
         return copyOf(goArtifacts);
-    }
-
-    public Properties properties() {
-        return properties;
-    }
-
-    public void properties(Properties properties) {
-        this.properties = properties;
     }
 
     public String url() {

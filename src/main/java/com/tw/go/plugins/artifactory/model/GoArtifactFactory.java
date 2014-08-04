@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Collection;
 
 import static com.google.common.collect.Collections2.transform;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.buildProperties;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
 
@@ -18,7 +19,7 @@ public class GoArtifactFactory {
         Collection<File> files = scanner.scan(path.from(config));
 
         boolean multipleFiles = files.size() > 1;
-        return transform(files, new GoArtifactMapper(uri.from(config), multipleFiles));
+        return transform(files, new GoArtifactMapper(uri.from(config), buildProperties.from(config), multipleFiles));
     }
 
 }

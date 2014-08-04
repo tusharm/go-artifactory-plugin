@@ -13,13 +13,11 @@ public class GoBuildDetailsBuilder {
     private String buildNumber;
     private DateTime startedAt;
     private GoArtifact artifact;
-    private Properties properties;
     private String buildUrl;
 
     public GoBuildDetails build() {
         GoBuildDetails buildDetails = new GoBuildDetails(buildName, buildNumber, startedAt);
         buildDetails.artifacts(asList(artifact));
-        buildDetails.properties(properties);
         buildDetails.url(buildUrl);
 
         return buildDetails;
@@ -42,11 +40,6 @@ public class GoBuildDetailsBuilder {
 
     public GoBuildDetailsBuilder artifact(GoArtifact artifact) {
         this.artifact = artifact;
-        return this;
-    }
-
-    public GoBuildDetailsBuilder properties(Properties properties) {
-        this.properties = properties;
         return this;
     }
 

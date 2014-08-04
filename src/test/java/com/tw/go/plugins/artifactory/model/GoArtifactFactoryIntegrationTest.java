@@ -9,12 +9,15 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.truth0.Truth.ASSERT;
 
 public class GoArtifactFactoryIntegrationTest {
     private static GoArtifactFactory factory;
     private static TaskExecutionContext context;
+    private Map<String, String> properties = new HashMap<String, String>() {{ put("name", "value"); }};
 
     @BeforeClass
     public static void beforeAll() throws Exception {
@@ -29,14 +32,13 @@ public class GoArtifactFactoryIntegrationTest {
         TaskConfig config = new TaskConfigBuilder()
                 .path(path("src", "test", "resources", "artifact.txt"))
                 .uri("repo/path/to/artifact.ext")
+                .property("name", "value")
                 .build();
 
         Collection<GoArtifact> artifacts = factory.createArtifacts(config, context);
 
-        GoArtifact expectedArtifact = new GoArtifact(
-                path(System.getProperty("user.dir"), "src", "test", "resources", "artifact.txt"),
-                "repo/path/to/artifact.ext"
-        );
+        GoArtifact expectedArtifact = goArtifact("src/test/resources/artifact.txt", "repo/path/to/artifact.ext", properties);
+
         ASSERT.that(artifacts).has().exactly(expectedArtifact);
     }
 
@@ -45,20 +47,23 @@ public class GoArtifactFactoryIntegrationTest {
         TaskConfig config = new TaskConfigBuilder()
                 .path(path("src", "test", "resources", "**{artifact.txt,test.html}"))
                 .uri("repo/path")
+                .property("name", "value")
                 .build();
 
         Collection<GoArtifact> artifacts = factory.createArtifacts(config, context);
 
-        GoArtifact artifactTxt = new GoArtifact(
-                path(System.getProperty("user.dir"), "src", "test", "resources", "artifact.txt"),
-                "repo/path/artifact.txt"
-        );
-        GoArtifact testHtml = new GoArtifact(
-                path(System.getProperty("user.dir"), "src", "test", "resources", "view", "test.html"),
-                "repo/path/test.html"
-        );
+        GoArtifact artifactTxt = goArtifact("src/test/resources/artifact.txt", "repo/path/artifact.txt", properties);
+        GoArtifact testHtml = goArtifact("src/test/resources/view/test.html", "repo/path/test.html", properties);
 
         ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
+    }
+
+    private GoArtifact goArtifact(String localPath, String uri, Map<String, String> properties) {
+        String[] segments = localPath.split("/");
+
+        GoArtifact artifact = new GoArtifact(path(System.getProperty("user.dir"), segments), uri);
+        artifact.properties(properties);
+        return artifact;
     }
 
     private String path(String first, String... more) {

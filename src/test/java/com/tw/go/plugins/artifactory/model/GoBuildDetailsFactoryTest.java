@@ -1,13 +1,11 @@
 package com.tw.go.plugins.artifactory.model;
 
 import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
-import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
@@ -23,15 +21,11 @@ public class GoBuildDetailsFactoryTest {
     }};
 
     private EnvironmentVariables environment;
-    private TaskConfig taskConfig;
 
     @Before
     public void beforeEach() {
         environment = mock(EnvironmentVariables.class);
         when(environment.asMap()).thenReturn(envVars);
-
-        taskConfig = mock(TaskConfig.class);
-        when(taskConfig.getValue("properties")).thenReturn("buildUrl=http://go:8153/blah");
     }
 
     @Test
@@ -39,12 +33,11 @@ public class GoBuildDetailsFactoryTest {
         GoBuildDetailsFactory factory = new GoBuildDetailsFactory();
 
         GoArtifact artifact = new GoArtifact("path", "uri/path");
-        GoBuildDetails details = factory.createBuildDetails(taskConfig, environment, asList(artifact));
+        GoBuildDetails details = factory.createBuildDetails(environment, asList(artifact));
 
         ASSERT.that(details.artifacts()).has().exactly(artifact);
         ASSERT.that(details.buildName()).is("pipeline");
         ASSERT.that(details.buildNumber()).is("pipelineCounter.stageCounter");
-        ASSERT.that(details.properties()).hasKey("buildUrl").withValue("http://go:8153/blah");
         ASSERT.that(details.url()).is("https://localhost:8154/go/pipelines/value_stream_map/pipeline/pipelineCounter");
     }
 }

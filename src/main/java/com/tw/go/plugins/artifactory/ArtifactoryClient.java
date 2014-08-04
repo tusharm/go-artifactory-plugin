@@ -35,7 +35,7 @@ public class ArtifactoryClient implements Closeable {
         this.buildInfoClient = new ArtifactoryBuildInfoClient(artifactoryUrl, user, password, logger);
     }
 
-    public ArtifactoryClient(ArtifactoryBuildInfoClient buildInfoClient) {
+    ArtifactoryClient(ArtifactoryBuildInfoClient buildInfoClient) {
         this.buildInfoClient = buildInfoClient;
     }
 
@@ -57,7 +57,6 @@ public class ArtifactoryClient implements Closeable {
                 .number(details.buildNumber())
                 .started(forPattern(STARTED_FORMAT).print(details.startedAt()))
                 .addModule(module)
-                .properties(details.properties())
                 .build();
 
         buildInfoClient.sendBuildInfo(build);
@@ -79,6 +78,7 @@ public class ArtifactoryClient implements Closeable {
                 .file(artifactFile)
                 .sha1(checksums.get("SHA1"))
                 .md5(checksums.get("MD5"))
+                .addProperties(artifact.properties())
                 .build();
 
         buildInfoClient.deployArtifact(deployDetails);

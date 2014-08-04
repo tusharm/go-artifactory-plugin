@@ -14,16 +14,12 @@ import static java.lang.String.format;
 
 public class GoBuildDetailsFactory {
 
-    public GoBuildDetails createBuildDetails(TaskConfig config, EnvironmentVariables envVars, Collection<GoArtifact> buildArtifacts) {
+    public GoBuildDetails createBuildDetails(EnvironmentVariables envVars, Collection<GoArtifact> buildArtifacts) {
         GoBuildDetails buildDetails =
                 new GoBuildDetails(GO_PIPELINE_NAME.from(envVars), buildNumber(envVars), DateTime.now());
 
         buildDetails.url(PIPELINE_VALUESTREAM_URL.from(envVars));
         buildDetails.artifacts(buildArtifacts);
-
-        Properties properties = new Properties();
-        properties.putAll(buildProperties.from(config));
-        buildDetails.properties(properties);
 
         return buildDetails;
     }
