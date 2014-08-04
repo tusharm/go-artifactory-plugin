@@ -31,6 +31,6 @@ public enum EnvironmentData {
         if (envMap.containsKey(name()))
             return envMap.get(name());
 
-        throw new EnvironmentVariableMissingException(name());
+        throw new MissingEnvironmentDataException(name());
     }
 }

@@ -21,7 +21,7 @@ public class EnvironmentDataTest {
         ASSERT.that(ARTIFACTORY_URL.from(environmentVariables)).isEqualTo("http://localhost");
     }
 
-    @Test(expected = EnvironmentVariableMissingException.class)
+    @Test(expected = MissingEnvironmentDataException.class)
     public void shouldThrowExceptionIfEnvironmentVariableIsMissing() {
         EnvironmentVariables environmentVariables = asEnvVars(new HashMap<String, String>());
         ARTIFACTORY_URL.from(environmentVariables);
