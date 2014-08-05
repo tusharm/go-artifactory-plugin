@@ -1,6 +1,5 @@
 package com.tw.go.plugins.artifactory.model;
 
-import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
 
 import java.util.*;

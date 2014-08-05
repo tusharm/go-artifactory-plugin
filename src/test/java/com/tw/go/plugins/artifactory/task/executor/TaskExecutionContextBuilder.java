@@ -26,6 +26,7 @@ public class TaskExecutionContextBuilder {
     public TaskExecutionContext build() {
         EnvironmentVariables environmentVariables = mock(EnvironmentVariables.class);
         when(environmentVariables.asMap()).thenReturn(envVars);
+        when(environmentVariables.secureEnvSpecifier()).thenReturn(mock(Console.SecureEnvVarSpecifier.class));
 
         TaskExecutionContext context = mock(TaskExecutionContext.class);
         when(context.environment()).thenReturn(environmentVariables);
