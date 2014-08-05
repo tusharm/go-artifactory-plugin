@@ -4,6 +4,8 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.joda.time.DateTime;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
@@ -14,11 +16,13 @@ public class GoBuildDetailsBuilder {
     private DateTime startedAt;
     private GoArtifact artifact;
     private String buildUrl;
+    private Map<String, String> envVars = new HashMap<>();
 
     public GoBuildDetails build() {
         GoBuildDetails buildDetails = new GoBuildDetails(buildName, buildNumber, startedAt);
         buildDetails.artifacts(asList(artifact));
         buildDetails.url(buildUrl);
+        buildDetails.environmentVariables(envVars);
 
         return buildDetails;
     }
@@ -45,6 +49,11 @@ public class GoBuildDetailsBuilder {
 
     public GoBuildDetailsBuilder url(String buildUrl) {
         this.buildUrl = buildUrl;
+        return this;
+    }
+
+    public GoBuildDetailsBuilder envVariable(String name, String value) {
+        envVars.put(name, value);
         return this;
     }
 }

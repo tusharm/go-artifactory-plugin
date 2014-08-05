@@ -1,6 +1,5 @@
 package com.tw.go.plugins.artifactory.utils.filesystem;
 
-import com.tw.go.plugins.artifactory.utils.filesystem.PathMatchingVisitor;
 import org.junit.Before;
 import org.junit.Test;
 

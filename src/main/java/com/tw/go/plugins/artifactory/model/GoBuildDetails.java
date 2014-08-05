@@ -1,13 +1,12 @@
 package com.tw.go.plugins.artifactory.model;
 
+import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.ImmutableMap.copyOf;
 
 public class GoBuildDetails {
     private String name;
@@ -15,6 +14,7 @@ public class GoBuildDetails {
     private String url;
     private DateTime startedAt;
     private List<GoArtifact> goArtifacts = new ArrayList<>();
+    private Map<String, String> envVars = new HashMap<>();
 
     public GoBuildDetails(String name, String number, DateTime startedAt) {
         this.name = name;
@@ -48,5 +48,13 @@ public class GoBuildDetails {
 
     public void url(String url) {
         this.url = url;
+    }
+
+    public void environmentVariables(Map<String, String> envVars) {
+        this.envVars = envVars;
+    }
+
+    public Map<String, String> environmentVariables() {
+        return copyOf(this.envVars);
     }
 }

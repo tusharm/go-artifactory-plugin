@@ -39,5 +39,7 @@ public class GoBuildDetailsFactoryTest {
         ASSERT.that(details.buildName()).is("pipeline");
         ASSERT.that(details.buildNumber()).is("pipelineCounter.stageCounter");
         ASSERT.that(details.url()).is("https://localhost:8154/go/pipelines/value_stream_map/pipeline/pipelineCounter");
+
+        ASSERT.that(details.environmentVariables()).isEqualTo(envVars);
     }
 }

@@ -1,11 +1,11 @@
 package com.tw.go.plugins.artifactory.client;
 
 import com.tw.go.plugins.artifactory.GoBuildDetailsBuilder;
-import com.tw.go.plugins.artifactory.client.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
+import org.jfrog.build.api.BuildInfoProperties;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
@@ -71,6 +71,7 @@ public class ArtifactoryClientTest {
                 .startedAt(new DateTime(2004, 12, 13, 21, 39, 45, 618, DateTimeZone.forID("Asia/Kolkata")))
                 .artifact(artifact)
                 .url("http://google.com")
+                .envVariable("name", "value")
                 .build();
 
         client.uploadBuildDetails(details);
@@ -88,6 +89,8 @@ public class ArtifactoryClientTest {
         List<Artifact> artifacts = build.getModule("buildName").getArtifacts();
         ASSERT.that(artifacts).isNotEmpty();
         ASSERT.that(artifacts.get(0).getName()).is("/a/b");
+
+        ASSERT.that(build.getProperties()).hasKey(BUILD_INFO_ENVIRONMENT_PREFIX + "name").withValue("value");
     }
 
     @Test

@@ -20,6 +20,7 @@ public class GoBuildDetailsFactory {
 
         buildDetails.url(PIPELINE_VALUESTREAM_URL.from(envVars));
         buildDetails.artifacts(buildArtifacts);
+        buildDetails.environmentVariables(envVars.asMap());
 
         return buildDetails;
     }

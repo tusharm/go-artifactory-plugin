@@ -1,6 +1,5 @@
 package com.tw.go.plugins.artifactory.utils.filesystem;
 
-import com.tw.go.plugins.artifactory.utils.filesystem.DirectoryScanner;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
