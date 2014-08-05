@@ -1,6 +1,7 @@
-package com.tw.go.plugins.artifactory;
+package com.tw.go.plugins.artifactory.client;
 
 import com.google.common.base.Function;
+import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
@@ -17,10 +18,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
 import static org.jfrog.build.api.Build.STARTED_FORMAT;

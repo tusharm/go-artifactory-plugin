@@ -1,10 +1,11 @@
-package com.tw.go.plugins.artifactory;
+package com.tw.go.plugins.artifactory.client;
 
+import com.tw.go.plugins.artifactory.GoBuildDetailsBuilder;
+import com.tw.go.plugins.artifactory.client.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
-import org.jfrog.build.api.util.FileChecksumCalculator;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
@@ -17,9 +18,9 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import static java.util.Arrays.asList;
+import static org.jfrog.build.api.BuildInfoProperties.BUILD_INFO_ENVIRONMENT_PREFIX;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.truth0.Truth.ASSERT;
@@ -41,7 +42,9 @@ public class ArtifactoryClientTest {
         String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
-        artifact.properties(new HashMap<String, String>() {{ put("name", "value"); }});
+        artifact.properties(new HashMap<String, String>() {{
+            put("name", "value");
+        }});
 
         client.uploadArtifacts(asList(artifact));
 
@@ -81,7 +84,6 @@ public class ArtifactoryClientTest {
         ASSERT.that(build.getNumber()).is("1.2");
         ASSERT.that(build.getStarted()).is("2004-12-13T21:39:45.618+0530");
         ASSERT.that(build.getModules().size()).is(1);
-
 
         List<Artifact> artifacts = build.getModule("buildName").getArtifacts();
         ASSERT.that(artifacts).isNotEmpty();

@@ -2,7 +2,7 @@ package com.tw.go.plugins.artifactory.model;
 
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
-import com.tw.go.plugins.artifactory.utils.DirectoryScanner;
+import com.tw.go.plugins.artifactory.utils.filesystem.DirectoryScanner;
 
 import java.io.File;
 import java.util.Collection;

@@ -2,7 +2,7 @@ package com.tw.go.plugins.artifactory.task.executor;
 
 import com.thoughtworks.go.plugin.api.response.execution.ExecutionResult;
 import com.thoughtworks.go.plugin.api.task.*;
-import com.tw.go.plugins.artifactory.ArtifactoryClient;
+import com.tw.go.plugins.artifactory.client.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;

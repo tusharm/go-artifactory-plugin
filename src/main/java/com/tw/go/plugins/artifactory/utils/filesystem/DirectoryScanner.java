@@ -1,4 +1,4 @@
-package com.tw.go.plugins.artifactory.utils;
+package com.tw.go.plugins.artifactory.utils.filesystem;
 
 import com.google.common.base.Function;
 import com.tw.go.plugins.artifactory.Logger;
