@@ -23,12 +23,6 @@ public class PathConfigElementTest {
 
         error = path.validate("../a/b");
         ASSERT.that(error).isAbsent();
-
-        error = path.validate("/a/b");
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
-
-        error = path.validate("/a/b");
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
     }
 
     @Test
