@@ -4,9 +4,11 @@ import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
 import com.tw.go.plugins.artifactory.task.executor.TaskExecutionContextBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,6 +69,6 @@ public class GoArtifactFactoryIntegrationTest {
     }
 
     private String path(String first, String... more) {
-        return Paths.get(first, more).toString();
+        return first + File.separator + StringUtils.join(more, File.separatorChar);
     }
 }
