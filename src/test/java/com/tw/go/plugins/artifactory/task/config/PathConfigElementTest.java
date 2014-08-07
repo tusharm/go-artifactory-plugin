@@ -6,11 +6,16 @@ import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskConfigProperty;
 import org.junit.Test;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+
+import static com.google.common.collect.Iterables.getLast;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
 import static org.truth0.Truth.ASSERT;
 
 public class PathConfigElementTest {
+    public static final Iterable<Path> ROOT_DIRECTORIES = FileSystems.getDefault().getRootDirectories();
+
     @Test
     public void shouldBeARelativePath() {
         Optional<ValidationError> error = path.validate("a/b");
@@ -28,10 +33,8 @@ public class PathConfigElementTest {
 
     @Test
     public void shouldNotValidateAnAbsolutePath() {
-        Optional<ValidationError> error = path.validate("/a/b");
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
-
-        error = path.validate("E:\\b");
+        String root = getLast(ROOT_DIRECTORIES).toString();
+        Optional<ValidationError> error = path.validate(root);
         ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
     }
 

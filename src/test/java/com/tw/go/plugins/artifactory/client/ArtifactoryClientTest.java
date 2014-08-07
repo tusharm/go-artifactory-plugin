@@ -5,7 +5,6 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
-import org.jfrog.build.api.BuildInfoProperties;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 import org.joda.time.DateTime;
@@ -15,6 +14,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ArtifactoryClientTest {
 
     @Test
     public void shouldUploadAnArtifact() throws IOException, NoSuchAlgorithmException {
-        String sourcePath = System.getProperty("user.dir") + "/src/test/resources/artifact.txt";
+        String sourcePath = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "artifact.txt").toString();
 
         GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
         artifact.properties(new HashMap<String, String>() {{

@@ -2,7 +2,7 @@ package com.tw.go.plugins.artifactory.task.config;
 
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 public class PathConfigElement extends ConfigElement<String> {
     protected PathConfigElement() {
@@ -14,7 +14,7 @@ public class PathConfigElement extends ConfigElement<String> {
         if (value.isEmpty())
             return false;
 
-        return ! (value.startsWith(File.separator) || value.matches("\\w:.*"));
+        return !Paths.get(value).isAbsolute();
     }
 
     @Override
