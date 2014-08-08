@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
+import static org.apache.commons.lang.StringUtils.join;
 import static org.truth0.Truth.ASSERT;
 
 public class GoArtifactFactoryIntegrationTest {
@@ -47,7 +48,7 @@ public class GoArtifactFactoryIntegrationTest {
     @Test
     public void shouldCreateArtifactsWithUniqueUris() {
         TaskConfig config = new TaskConfigBuilder()
-                .path(globbedPath("src", "test", "resources", "**{artifact.txt,test.html}"))
+                .path(asPath("src", "test", "resources", "**{artifact.txt,test.html}"))
                 .uri("repo/path")
                 .property("name", "value")
                 .build();
@@ -60,15 +61,15 @@ public class GoArtifactFactoryIntegrationTest {
         ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
     }
 
-    private GoArtifact goArtifact(String localPath, String uri, Map<String, String> properties) {
-        String[] segments = localPath.split("/");
+    private GoArtifact goArtifact(String relativePath, String uri, Map<String, String> properties) {
+        String[] segments = relativePath.split("/");
 
         GoArtifact artifact = new GoArtifact(path(System.getProperty("user.dir"), segments), uri);
         artifact.properties(properties);
         return artifact;
     }
 
-    private String globbedPath(String first, String... more) {
-        return first + File.separator + StringUtils.join(more, File.separatorChar);
+    private String asPath(String... segments) {
+        return join(segments, File.separatorChar);
     }
 }

@@ -1,5 +1,6 @@
 package com.tw.go.plugins.artifactory.model;
 
+import com.google.common.base.Function;
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.tw.go.plugins.artifactory.utils.filesystem.DirectoryScanner;
@@ -19,7 +20,22 @@ public class GoArtifactFactory {
         Collection<File> files = scanner.scan(path.from(config));
 
         boolean multipleFiles = files.size() > 1;
-        return transform(files, new GoArtifactMapper(uri.from(config), buildProperties.from(config), multipleFiles));
+        return transform(files, goArtifact(config, multipleFiles));
     }
 
+    private Function<File, GoArtifact> goArtifact(final TaskConfig config, final boolean multipleFiles) {
+        return new Function<File, GoArtifact>() {
+            @Override
+            public GoArtifact apply(File file) {
+                GoArtifact artifact = new GoArtifact(file.getAbsolutePath(), artifactUri(file.getName()));
+                artifact.properties(buildProperties.from(config));
+                return artifact;
+            }
+
+            private String artifactUri(String artifactName) {
+                String baseUri = uri.from(config);
+                return multipleFiles ? baseUri + "/" + artifactName : baseUri;
+            }
+        };
+    }
 }
