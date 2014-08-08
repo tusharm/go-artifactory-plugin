@@ -19,6 +19,8 @@ The plugin requires these environment variables to be set for the Go task
 Copy the plugin [jar](https://github.com/tusharm/go-artifactory-plugin/releases) to the _plugins/external_ directory 
 on the Go server and restart. Refer to "Installing a plugin" section of [Go Documentation](http://www.thoughtworks.com/products/docs/go/current/help/go_plugins_basics.html) for details.
 
+You can get better log messages by setting plugin log level in Go Agent startup configuration
+e.g. `export GO_AGENT_SYSTEM_PROPERTIES=" -Dplugin.com.tw.go.plugins.go-artifactory-plugin.log.level=DEBUG "`
 
 ### Screenshots
 
