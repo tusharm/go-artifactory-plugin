@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
+import static com.tw.go.plugins.artifactory.testutils.MapBuilder.map;
 import static org.truth0.Truth.ASSERT;
 
 public class PublishTaskExecutorIntegrationTest {
@@ -46,14 +47,15 @@ public class PublishTaskExecutorIntegrationTest {
                 .build();
 
         TaskExecutionContext executionContext =
-                new TaskExecutionContextBuilder().withWorkingDir(System.getProperty("user.dir"))
-                        .withEnvVar("ARTIFACTORY_URL", "http://localhost:8888")
-                        .withEnvVar("ARTIFACTORY_USER", "admin")
-                        .withEnvVar("ARTIFACTORY_PASSWORD", "password")
-                        .withEnvVar("GO_SERVER_URL", "http://localhost:8153/go")
-                        .withEnvVar("GO_PIPELINE_NAME", "pipeline")
-                        .withEnvVar("GO_PIPELINE_COUNTER", "1")
-                        .withEnvVar("GO_STAGE_COUNTER", "3")
+                new TaskExecutionContextBuilder()
+                        .withWorkingDir(System.getProperty("user.dir"))
+                        .withEnvVars(map("ARTIFACTORY_URL", "http://localhost:8888")
+                                .and("ARTIFACTORY_USER", "admin")
+                                .and("ARTIFACTORY_PASSWORD", "password")
+                                .and("GO_SERVER_URL", "http://localhost:8153/go")
+                                .and("GO_PIPELINE_NAME", "pipeline")
+                                .and("GO_PIPELINE_COUNTER", "1")
+                                .and("GO_STAGE_COUNTER", "3"))
                         .build();
 
         artifactoryStub.put("/test-repo/path/to/artifact.ext").withContent("content").returns(response(201));

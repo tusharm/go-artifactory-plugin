@@ -2,6 +2,9 @@ package com.tw.go.plugins.artifactory.utils.filesystem;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -13,16 +16,13 @@ import static org.mockito.Mockito.when;
 import static org.truth0.Truth.ASSERT;
 
 public class PathMatchingVisitorTest {
-    private Path tempPath;
-    private PathMatcher matcher;
-    private PathMatchingVisitor visitor;
+    @Mock private Path tempPath;
+    @Mock private PathMatcher matcher;
+    @InjectMocks private PathMatchingVisitor visitor;
 
     @Before
     public void beforeEach() throws IOException {
-        tempPath = mock(Path.class);
-
-        matcher = mock(PathMatcher.class);
-        visitor = new PathMatchingVisitor(matcher);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

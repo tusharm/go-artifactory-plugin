@@ -5,16 +5,17 @@ import com.thoughtworks.go.plugin.api.task.EnvironmentVariables;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TaskExecutionContextBuilder {
-    private HashMap<String, String> envVars = new HashMap<>();
+    private Map<String, String> envVars = new HashMap<>();
     private String workingDir;
 
-    public TaskExecutionContextBuilder withEnvVar(String name, String value) {
-        envVars.put(name, value);
+    public TaskExecutionContextBuilder withEnvVars(Map<String, String> envVars) {
+        this.envVars = envVars;
         return this;
     }
 

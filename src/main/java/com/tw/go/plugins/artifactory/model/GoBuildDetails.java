@@ -12,7 +12,7 @@ public class GoBuildDetails {
     private String number;
     private String url;
     private DateTime startedAt;
-    private List<GoArtifact> goArtifacts = new ArrayList<>();
+    private Collection<GoArtifact> goArtifacts = new ArrayList<>();
     private Map<String, String> envVars = new HashMap<>();
 
     public GoBuildDetails(String name, String number, DateTime startedAt) {
@@ -34,7 +34,7 @@ public class GoBuildDetails {
     }
 
     public void artifacts(Collection<GoArtifact> artifacts) {
-        goArtifacts = copyOf(artifacts);
+        goArtifacts = artifacts;
     }
 
     public List<GoArtifact> artifacts() {

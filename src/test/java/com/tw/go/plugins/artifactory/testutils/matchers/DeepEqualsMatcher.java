@@ -1,6 +1,5 @@
 package com.tw.go.plugins.artifactory.testutils.matchers;
 
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -26,11 +25,6 @@ public abstract class DeepEqualsMatcher<T> extends TypeSafeMatcher<T> {
 
     protected DeepEqualsMatcher(T expected) {
         this.expected = expected;
-    }
-
-    @Override
-    public void describeTo(Description description) {
-        description.appendValue(expected);
     }
 
     static class Ignored {

@@ -9,11 +9,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
 import static org.truth0.Truth.ASSERT;
 
 public class GoArtifactFactoryIntegrationTest {
@@ -47,7 +47,7 @@ public class GoArtifactFactoryIntegrationTest {
     @Test
     public void shouldCreateArtifactsWithUniqueUris() {
         TaskConfig config = new TaskConfigBuilder()
-                .path(path("src", "test", "resources", "**{artifact.txt,test.html}"))
+                .path(globbedPath("src", "test", "resources", "**{artifact.txt,test.html}"))
                 .uri("repo/path")
                 .property("name", "value")
                 .build();
@@ -68,7 +68,7 @@ public class GoArtifactFactoryIntegrationTest {
         return artifact;
     }
 
-    private String path(String first, String... more) {
+    private String globbedPath(String first, String... more) {
         return first + File.separator + StringUtils.join(more, File.separatorChar);
     }
 }

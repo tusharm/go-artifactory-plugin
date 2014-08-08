@@ -2,6 +2,7 @@ package com.tw.go.plugins.artifactory;
 
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
+import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
@@ -54,6 +55,11 @@ public class GoBuildDetailsBuilder {
 
     public GoBuildDetailsBuilder envVariable(String name, String value) {
         envVars.put(name, value);
+        return this;
+    }
+
+    public GoBuildDetailsBuilder envVariables(Map<String, String> envVars) {
+        this.envVars = envVars;
         return this;
     }
 }

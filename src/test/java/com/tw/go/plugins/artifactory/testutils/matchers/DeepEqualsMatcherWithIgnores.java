@@ -29,7 +29,7 @@ class DeepEqualsMatcherWithIgnores<T> extends DeepEqualsMatcher<T> {
 
     @Override
     public void describeTo(Description description) {
-        super.describeTo(description);
+        description.appendValue(expected);
         description.appendText(" while ignoring fields: " + ignoredFieldNames);
     }
 
