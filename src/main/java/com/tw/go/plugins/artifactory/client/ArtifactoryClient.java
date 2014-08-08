@@ -17,48 +17,59 @@ import java.util.*;
 public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
 
+    // TODO: Needs a better name
     private BuildMap buildMap = new BuildMap();
+
     private ArtifactoryBuildInfoClient buildInfoClient;
 
     public ArtifactoryClient(String artifactoryUrl, String user, String password) {
         this.buildInfoClient = new ArtifactoryBuildInfoClient(artifactoryUrl, user, password, logger);
     }
 
+    // TODO: is this really required?
     ArtifactoryClient(ArtifactoryBuildInfoClient buildInfoClient) {
         this.buildInfoClient = buildInfoClient;
     }
 
-    public void uploadArtifacts(Collection<GoArtifact> artifacts) throws IOException, NoSuchAlgorithmException {
+    public void uploadArtifacts(Collection<GoArtifact> artifacts) {
         for (GoArtifact artifact : artifacts) {
-            uploadArtifact(artifact);
+            upload(artifact);
         }
     }
 
-    public void uploadBuildDetails(GoBuildDetails details) throws IOException {
+    public void uploadBuildDetails(GoBuildDetails details) {
         Build build = buildMap.apply(details);
-        buildInfoClient.sendBuildInfo(build);
+        try {
+            buildInfoClient.sendBuildInfo(build);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to upload build info", e);
+        }
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         buildInfoClient.shutdown();
     }
 
-    private void uploadArtifact(GoArtifact artifact) throws IOException, NoSuchAlgorithmException {
+    private void upload(GoArtifact artifact) {
         File artifactFile = new File(artifact.localPath());
 
-        Map<String, String> checksums = FileChecksumCalculator.calculateChecksums(artifactFile, "SHA1", "MD5");
+        try {
+            Map<String, String> checksums = FileChecksumCalculator.calculateChecksums(artifactFile, "SHA1", "MD5");
 
-        DeployDetails deployDetails = new DeployDetails.Builder()
-                .targetRepository(artifact.repository())
-                .artifactPath(artifact.artifactPath())
-                .file(artifactFile)
-                .sha1(checksums.get("SHA1"))
-                .md5(checksums.get("MD5"))
-                .addProperties(artifact.properties())
-                .build();
+            DeployDetails deployDetails = new DeployDetails.Builder()
+                    .targetRepository(artifact.repository())
+                    .artifactPath(artifact.artifactPath())
+                    .file(artifactFile)
+                    .sha1(checksums.get("SHA1"))
+                    .md5(checksums.get("MD5"))
+                    .addProperties(artifact.properties())
+                    .build();
 
-        buildInfoClient.deployArtifact(deployDetails);
+            buildInfoClient.deployArtifact(deployDetails);
+        }
+        catch (IOException | NoSuchAlgorithmException e) {
+            throw new RuntimeException("Unable to upload artifact: " + artifact, e);
+        }
     }
-
 }

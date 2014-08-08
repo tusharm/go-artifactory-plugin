@@ -44,7 +44,7 @@ public class PublishTaskExecutor implements TaskExecutor {
             console.printLine(format("Successfully published artifacts:\n%s", asString(artifacts)));
             return success("");
         }
-        catch (IOException | NoSuchAlgorithmException e) {
+        catch (RuntimeException e) {
             String message = format("Failed to publish one or more artifact [%s]", artifacts);
             logger.error(message, e);
             return failure(format("%s: %s", message, e.getMessage()));
