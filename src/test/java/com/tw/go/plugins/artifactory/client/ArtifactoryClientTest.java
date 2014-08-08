@@ -5,6 +5,7 @@ import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Artifact;
 import org.jfrog.build.api.Build;
+import org.jfrog.build.api.Module;
 import org.jfrog.build.api.builder.ArtifactBuilder;
 import org.jfrog.build.api.builder.BuildInfoBuilder;
 import org.jfrog.build.api.builder.ModuleBuilder;
@@ -35,18 +36,20 @@ public class ArtifactoryClientTest {
 
     private ArtifactoryBuildInfoClient buildInfoClient;
     private ArtifactoryClient client;
+    private GoArtifact artifact;
 
     @Before
     public void beforeEach() {
         buildInfoClient = mock(ArtifactoryBuildInfoClient.class);
         client = new ArtifactoryClient(buildInfoClient);
+
+        String sourcePath = path(System.getProperty("user.dir"), "src", "test", "resources", "artifact.txt");
+        artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
+        artifact.properties(map("name", "value"));
     }
 
     @Test
     public void shouldUploadAnArtifact() throws IOException, NoSuchAlgorithmException {
-        String sourcePath = path(System.getProperty("user.dir"), "src", "test", "resources", "artifact.txt");
-        GoArtifact artifact = new GoArtifact(sourcePath, "repo/path/to/artifact.txt");
-        artifact.properties(map("name", "value"));
 
         client.uploadArtifacts(asList(artifact));
 
@@ -56,7 +59,7 @@ public class ArtifactoryClientTest {
         assertThat(captor.getValue(), deepEquals(new DeployDetails.Builder()
                                 .targetRepository("repo")
                                 .artifactPath("path/to/artifact.txt")
-                                .file(new File(sourcePath))
+                                .file(new File(artifact.localPath()))
                                 .md5("9a0364b9e99bb480dd25e1f0284c8555")
                                 .sha1("040f06fd774092478d450774f5ba30c5da78acc8")
                                 .addProperty("name", "value")
@@ -67,8 +70,6 @@ public class ArtifactoryClientTest {
 
     @Test
     public void shouldUploadBuildDetails() throws IOException {
-        GoArtifact artifact = new GoArtifact("/a/b", "c/d");
-
         GoBuildDetails details = new GoBuildDetailsBuilder()
                 .buildName("buildName")
                 .buildNumber("1.2")
@@ -83,11 +84,18 @@ public class ArtifactoryClientTest {
         ArgumentCaptor<Build> captor = ArgumentCaptor.forClass(Build.class);
         verify(buildInfoClient).sendBuildInfo(captor.capture());
 
+        Module module = new ModuleBuilder().id("buildName").addArtifact(
+                        new ArtifactBuilder("artifact.txt")
+                                .md5("9a0364b9e99bb480dd25e1f0284c8555")
+                                .sha1("040f06fd774092478d450774f5ba30c5da78acc8")
+                                .build()
+                ).build();
+
         assertThat(captor.getValue(), deepEquals(new BuildInfoBuilder("buildName")
                                 .url("http://google.com")
                                 .number("1.2")
                                 .started("2004-12-13T21:39:45.618+0530")
-                                .modules(asList(new ModuleBuilder().id("buildName").addArtifact(new ArtifactBuilder("/a/b").build()).build()))
+                                .modules(asList(module))
                                 .addProperty(BUILD_INFO_ENVIRONMENT_PREFIX + "name", "value")
                                 .build()
                 )

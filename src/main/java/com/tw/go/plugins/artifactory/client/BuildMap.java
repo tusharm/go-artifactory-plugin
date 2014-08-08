@@ -13,22 +13,18 @@ import org.jfrog.build.api.builder.ModuleBuilder;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.jfrog.build.api.Build.STARTED_FORMAT;
 import static org.jfrog.build.api.BuildInfoProperties.BUILD_INFO_ENVIRONMENT_PREFIX;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 public class BuildMap implements Function<GoBuildDetails, Build> {
+
     @Override
     public Build apply(GoBuildDetails buildDetails) {
-        Collection<Artifact> artifacts = transform(buildDetails.artifacts(), new Function<GoArtifact, Artifact>() {
-            @Override
-            public Artifact apply(GoArtifact goArtifact) {
-                return new ArtifactBuilder(goArtifact.localPath()).build();
-            }
-        });
-
-        Module module = new ModuleBuilder().id(buildDetails.buildName())
-                .artifacts(new ArrayList(artifacts))
+        Module module = new ModuleBuilder()
+                .id(buildDetails.buildName())
+                .artifacts(artifactsFrom(buildDetails))
                 .build();
 
         return new BuildInfoBuilder(buildDetails.buildName())
@@ -38,6 +34,18 @@ public class BuildMap implements Function<GoBuildDetails, Build> {
                 .addModule(module)
                 .properties(environmentProperties(buildDetails))
                 .build();
+    }
+
+    private List<Artifact> artifactsFrom(GoBuildDetails buildDetails) {
+        return newArrayList(transform(buildDetails.artifacts(), new Function<GoArtifact, Artifact>() {
+            @Override
+            public Artifact apply(GoArtifact artifact) {
+                return new ArtifactBuilder(artifact.remoteName())
+                        .md5(artifact.md5())
+                        .sha1(artifact.sha1())
+                        .build();
+            }
+        }));
     }
 
     private Properties environmentProperties(GoBuildDetails buildDetails) {

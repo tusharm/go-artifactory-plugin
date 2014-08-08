@@ -1,7 +1,6 @@
 package com.tw.go.plugins.artifactory.model;
 
 import org.junit.Test;
-import org.truth0.Truth;
 
 import static org.truth0.Truth.ASSERT;
 
@@ -11,11 +10,16 @@ public class GoArtifactTest {
     @Test
     public void shouldSplitUriIntoRepoAndArtifactPath() {
         ASSERT.that(artifact.repository()).is("repo");
-        ASSERT.that(artifact.artifactPath()).is("path/to/artifact.ext");
+        ASSERT.that(artifact.remotePath()).is("path/to/artifact.ext");
     }
 
     @Test
     public void shouldReturnTheLocalPath() {
         ASSERT.that(artifact.localPath()).is("/full/path/to/artifact");
+    }
+
+    @Test
+    public void shouldReturnTheRemoteArtifactName() {
+        ASSERT.that(artifact.remoteName()).is("artifact.ext");
     }
 }

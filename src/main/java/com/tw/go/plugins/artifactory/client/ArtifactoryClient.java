@@ -4,14 +4,12 @@ import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Build;
-import org.jfrog.build.api.util.FileChecksumCalculator;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.DeployDetails;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class ArtifactoryClient implements Closeable {
@@ -55,20 +53,19 @@ public class ArtifactoryClient implements Closeable {
         File artifactFile = new File(artifact.localPath());
 
         try {
-            Map<String, String> checksums = FileChecksumCalculator.calculateChecksums(artifactFile, "SHA1", "MD5");
 
             DeployDetails deployDetails = new DeployDetails.Builder()
                     .targetRepository(artifact.repository())
-                    .artifactPath(artifact.artifactPath())
+                    .artifactPath(artifact.remotePath())
                     .file(artifactFile)
-                    .sha1(checksums.get("SHA1"))
-                    .md5(checksums.get("MD5"))
+                    .sha1(artifact.sha1())
+                    .md5(artifact.md5())
                     .addProperties(artifact.properties())
                     .build();
 
             buildInfoClient.deployArtifact(deployDetails);
         }
-        catch (IOException | NoSuchAlgorithmException e) {
+        catch (IOException e) {
             throw new RuntimeException("Unable to upload artifact: " + artifact, e);
         }
     }

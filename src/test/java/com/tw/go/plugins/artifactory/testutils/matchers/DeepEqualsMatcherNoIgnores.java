@@ -25,7 +25,7 @@ class DeepEqualsMatcherNoIgnores<T> extends DeepEqualsMatcher<T> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendValue(error.getLocalizedMessage());
+        description.appendValue(error);
     }
 }
 
