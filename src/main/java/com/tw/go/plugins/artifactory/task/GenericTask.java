@@ -23,7 +23,7 @@ public abstract class GenericTask implements Task {
         TaskConfig taskConfig = new TaskConfig();
 
         for (ConfigElement config : configs) {
-            config.addPropertyTo(taskConfig);
+            config.addTo(taskConfig);
         }
         return taskConfig;
     }

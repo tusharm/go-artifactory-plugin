@@ -14,6 +14,8 @@ import static java.util.Arrays.asList;
 
 @Extension
 public class PublishTask extends GenericTask {
+    private GoArtifactFactory artifactFactory = new GoArtifactFactory();
+    private GoBuildDetailsFactory buildDetailsFactory = new GoBuildDetailsFactory();
 
     public PublishTask() {
         this(asList(uri, path, buildProperties));
@@ -25,8 +27,7 @@ public class PublishTask extends GenericTask {
 
     @Override
     public TaskExecutor executor() {
-        GoArtifactFactory artifactFactory = new GoArtifactFactory();
-        return new PublishTaskExecutor(artifactFactory, new GoBuildDetailsFactory());
+        return new PublishTaskExecutor(artifactFactory, buildDetailsFactory);
     }
 
     @Override

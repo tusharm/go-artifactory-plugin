@@ -6,34 +6,34 @@ import com.thoughtworks.go.plugin.api.response.validation.ValidationError;
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Optional.fromNullable;
+import static java.util.Arrays.asList;
 
 public abstract class ConfigElement<T> {
     public static ConfigElement<String> uri = new UriConfigElement();
     public static ConfigElement<String> path = new PathConfigElement();
     public static ConfigElement<Map<String, String>> buildProperties = new BuildPropertiesConfigElement();
 
-    private String name;
+    public List<String> names;
 
-    protected ConfigElement(String name) {
-        this.name = name;
+    protected ConfigElement(String... name) {
+        this.names = asList(name);
     }
 
     public String name() {
-        return name;
+        return names.get(0);
     }
 
-    public void addPropertyTo(TaskConfig taskConfig) {
-        taskConfig.addProperty(name());
+    public void addTo(TaskConfig taskConfig) {
+        for (String name : names) {
+            taskConfig.addProperty(name);
+        }
     }
 
-    public Optional<ValidationError> validate(TaskConfig taskConfig) {
-        String configValue = taskConfig.getValue(name());
-        return validate(configValue);
-    }
-
-    public abstract Optional<ValidationError> validate(String value);
     public abstract T from(TaskConfig taskConfig);
+    public abstract Optional<ValidationError> validate(TaskConfig taskConfig);
 }

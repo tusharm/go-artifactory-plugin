@@ -7,24 +7,28 @@ import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 
-public class UriConfigElement extends ConfigElement {
+public class UriConfigElement extends ConfigElement<String> {
+    private static final String URI = "uri";
+
     protected UriConfigElement() {
-        super("uri");
+        super(URI);
     }
 
     @Override
-    public Optional<ValidationError> validate(String value) {
+    public Optional<ValidationError> validate(TaskConfig taskConfig) {
+        String value = from(taskConfig);
+
         if (value.isEmpty())
-            return of(new ValidationError(name(), "Uri is mandatory"));
+            return of(new ValidationError(URI, "Uri is mandatory"));
 
         if (!value.matches("[^/].*"))
-            return of(new ValidationError(name(), "Relative uri should not start with a '/'"));
+            return of(new ValidationError(URI, "Relative uri should not start with a '/'"));
 
         return absent();
     }
 
     @Override
     public String from(TaskConfig taskConfig) {
-        return taskConfig.getValue(name());
+        return taskConfig.getValue(URI);
     }
 }
