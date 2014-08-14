@@ -16,22 +16,24 @@ public abstract class ConfigElement<T> {
     public static ConfigElement<Map<String, String>> buildProperties = new BuildPropertiesConfigElement();
 
     private String name;
-    private String validationErrorMessage;
 
-    protected ConfigElement(String name, String validationErrorMessage) {
+    protected ConfigElement(String name) {
         this.name = name;
-        this.validationErrorMessage = validationErrorMessage;
     }
 
     public String name() {
         return name;
     }
 
-    public Optional<ValidationError> validate(String value) {
-        return fromNullable(isValid(value) ? null : new ValidationError(name(), validationErrorMessage));
+    public void addPropertyTo(TaskConfig taskConfig) {
+        taskConfig.addProperty(name());
     }
 
-    protected abstract boolean isValid(String value);
+    public Optional<ValidationError> validate(TaskConfig taskConfig) {
+        String configValue = taskConfig.getValue(name());
+        return validate(configValue);
+    }
 
+    public abstract Optional<ValidationError> validate(String value);
     public abstract T from(TaskConfig taskConfig);
 }

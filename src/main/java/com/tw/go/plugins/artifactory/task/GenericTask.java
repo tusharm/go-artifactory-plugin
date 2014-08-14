@@ -9,7 +9,6 @@ import com.thoughtworks.go.plugin.api.task.TaskView;
 import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.view.TemplateBasedTaskView;
 
-import java.util.EnumSet;
 import java.util.List;
 
 public abstract class GenericTask implements Task {
@@ -24,7 +23,7 @@ public abstract class GenericTask implements Task {
         TaskConfig taskConfig = new TaskConfig();
 
         for (ConfigElement config : configs) {
-            taskConfig.addProperty(config.name());
+            config.addPropertyTo(taskConfig);
         }
         return taskConfig;
     }
@@ -34,9 +33,7 @@ public abstract class GenericTask implements Task {
         ValidationResult result = new ValidationResult();
 
         for (ConfigElement config : configs) {
-            String configValue = taskConfig.getValue(config.name());
-            Optional<ValidationError> error = config.validate(configValue);
-
+            Optional<ValidationError> error = config.validate(taskConfig);
             if (error.isPresent()) {
                 result.addError(error.get());
             }

@@ -35,7 +35,7 @@ public class PathConfigElementTest {
     @Test
     public void shouldNotValidateEmptyPath() {
         Optional<ValidationError> error = path.validate("");
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path is mandatory"));
     }
 
     @Test

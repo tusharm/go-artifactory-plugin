@@ -14,13 +14,13 @@ public class UriConfigElementTest {
     @Test
     public void shouldNotBeEmpty() {
         Optional<ValidationError> error = uri.validate("");
-        ASSERT.that(error).hasValue(new ValidationError(uri.name(), "Invalid uri"));
+        ASSERT.that(error).hasValue(new ValidationError(uri.name(), "Uri is mandatory"));
     }
 
     @Test
     public void shouldNotStartWithSlash() {
         Optional<ValidationError> error = uri.validate("/a/b");
-        ASSERT.that(error).hasValue(new ValidationError(uri.name(), "Invalid uri"));
+        ASSERT.that(error).hasValue(new ValidationError(uri.name(), "Relative uri should not start with a '/'"));
     }
 
     @Test
