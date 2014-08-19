@@ -8,21 +8,19 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static com.google.common.collect.ImmutableList.copyOf;
 import static java.lang.String.format;
 
 public class PathMatchingVisitor extends SimpleFileVisitor<Path> {
     private Logger logger = Logger.getLogger(getClass());
 
     private PathMatcher pathMatcher;
-    private List<Path> matched;
+    private Set<Path> matched;
 
     public PathMatchingVisitor(PathMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
-        this.matched = new ArrayList();
+        this.matched = new HashSet<>();
     }
 
     @Override
@@ -39,7 +37,7 @@ public class PathMatchingVisitor extends SimpleFileVisitor<Path> {
         return super.visitFileFailed(path, exception);
     }
 
-    public List<Path> matched() {
-        return copyOf(matched);
+    public Collection<Path> matched() {
+        return matched;
     }
 }

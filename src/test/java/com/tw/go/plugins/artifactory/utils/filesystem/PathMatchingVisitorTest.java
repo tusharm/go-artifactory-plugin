@@ -36,6 +36,16 @@ public class PathMatchingVisitorTest {
     }
 
     @Test
+    public void shouldReturnUniqueFiles() throws IOException {
+        when(matcher.matches(tempPath)).thenReturn(true);
+
+        visitor.visitFile(tempPath, null);
+        visitor.visitFile(tempPath, null);
+
+        ASSERT.that(visitor.matched()).has().exactly(tempPath);
+    }
+
+    @Test
     public void shouldReturnEmptyListWhenNoFilesMatched() throws IOException {
         when(matcher.matches(tempPath)).thenReturn(false);
 

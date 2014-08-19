@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static java.lang.String.format;
+
 public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
 
@@ -40,7 +42,7 @@ public class ArtifactoryClient implements Closeable {
         try {
             buildInfoClient.sendBuildInfo(build);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to upload build info", e);
+            throw new RuntimeException(format("Unable to upload build info : %s", e.getMessage()), e);
         }
     }
 
@@ -53,7 +55,6 @@ public class ArtifactoryClient implements Closeable {
         File artifactFile = new File(artifact.localPath());
 
         try {
-
             DeployDetails deployDetails = new DeployDetails.Builder()
                     .targetRepository(artifact.repository())
                     .artifactPath(artifact.remotePath())
@@ -66,7 +67,7 @@ public class ArtifactoryClient implements Closeable {
             buildInfoClient.deployArtifact(deployDetails);
         }
         catch (IOException e) {
-            throw new RuntimeException("Unable to upload artifact: " + artifact, e);
+            throw new RuntimeException(format("Unable to upload artifact %s : %s", artifact, e.getMessage()), e);
         }
     }
 }

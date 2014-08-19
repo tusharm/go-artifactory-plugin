@@ -18,13 +18,14 @@ public class GoArtifact {
     private String repository;
     private String localPath;
     private String remotePath;
+    private Splitter splitter;
     private Map<String, String> properties = new HashMap<>();
-    private final Splitter splitter = Splitter.on("/").omitEmptyStrings();
     private Map<String, String> checksums = emptyMap();
 
 
     public GoArtifact(String localPath, String uri) {
         this.localPath = localPath;
+        this.splitter = Splitter.on("/").omitEmptyStrings().trimResults();
 
         List<String> segments = splitter.limit(2).splitToList(uri);
         this.repository = segments.get(0);

@@ -14,10 +14,10 @@ import static org.truth0.Truth.ASSERT;
 public class GuavaTests {
     @Test
     public void shouldSplitAStringBasedOnDelimiterAndNumberOfTimes() {
-        String testString = "a/b/c/d";
-        List<String> splits = Splitter.on("/").limit(2).splitToList(testString);
+        String testString = "a/b/c.txt";
+        List<String> splits = Splitter.on("/").omitEmptyStrings().limit(2).splitToList(testString);
 
-        ASSERT.that(splits).has().exactlyAs(asList("a", "b/c/d"));
+        ASSERT.that(splits).has().exactlyAs(asList("a", "b/c.txt"));
     }
 
     @Test
