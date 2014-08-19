@@ -19,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -66,6 +68,19 @@ public class ArtifactoryClientTest {
                                 .build()
                 )
         );
+    }
+
+    @Test
+    public void shouldRemoveTrailingSlashesFromBuildPropertyValues() throws IOException {
+        artifact.properties(map("url", "http://a.com/b/"));
+        client.uploadArtifacts(asList(artifact));
+
+        ArgumentCaptor<DeployDetails> captor = ArgumentCaptor.forClass(DeployDetails.class);
+        verify(buildInfoClient).deployArtifact(captor.capture());
+
+        DeployDetails deployDetails = captor.getValue();
+
+        ASSERT.that(deployDetails.getProperties()).hasKey("url").withValue("http://a.com/b");
     }
 
     @Test

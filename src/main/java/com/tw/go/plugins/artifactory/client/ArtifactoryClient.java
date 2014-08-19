@@ -1,5 +1,6 @@
 package com.tw.go.plugins.artifactory.client;
 
+import com.google.common.base.Function;
 import com.tw.go.plugins.artifactory.Logger;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
@@ -10,9 +11,12 @@ import org.jfrog.build.client.DeployDetails;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
+import static com.google.common.collect.Maps.toMap;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.chomp;
 
 public class ArtifactoryClient implements Closeable {
     private Logger logger = Logger.getLogger(getClass());
@@ -61,13 +65,21 @@ public class ArtifactoryClient implements Closeable {
                     .file(artifactFile)
                     .sha1(artifact.sha1())
                     .md5(artifact.md5())
-                    .addProperties(artifact.properties())
+                    .addProperties(removeTrailingSlashes(artifact.properties()))
                     .build();
 
             buildInfoClient.deployArtifact(deployDetails);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(format("Unable to upload artifact %s : %s", artifact, e.getMessage()), e);
         }
+    }
+
+    private Map<String, String> removeTrailingSlashes(final Map<String, String> properties) {
+        return toMap(properties.keySet(), new Function<String, String>() {
+            @Override
+            public String apply(String key) {
+                return chomp(properties.get(key), "/");
+            }
+        });
     }
 }
