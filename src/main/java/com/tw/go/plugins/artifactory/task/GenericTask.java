@@ -12,9 +12,9 @@ import com.tw.go.plugins.artifactory.task.view.TemplateBasedTaskView;
 import java.util.List;
 
 public abstract class GenericTask implements Task {
-    private List<ConfigElement<?>> configs;
+    private List<? extends ConfigElement> configs;
 
-    public GenericTask(List<ConfigElement<?>> configs) {
+    public GenericTask(List<? extends ConfigElement> configs) {
         this.configs = configs;
     }
 

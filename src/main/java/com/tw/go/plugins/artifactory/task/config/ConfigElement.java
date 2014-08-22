@@ -14,7 +14,7 @@ import static com.google.common.base.Optional.fromNullable;
 import static java.util.Arrays.asList;
 
 public abstract class ConfigElement<T> {
-    public static ConfigElement<String> uri = new UriConfigElement();
+    public static ConfigElement<UriConfig> uriConfig = new UriConfigElement();
     public static ConfigElement<String> path = new PathConfigElement();
     public static ConfigElement<Map<String, String>> buildProperties = new BuildPropertiesConfigElement();
 

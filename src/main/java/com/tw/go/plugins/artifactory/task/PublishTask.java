@@ -18,10 +18,10 @@ public class PublishTask extends GenericTask {
     private GoBuildDetailsFactory buildDetailsFactory = new GoBuildDetailsFactory();
 
     public PublishTask() {
-        this(asList(uri, path, buildProperties));
+        this(asList(uriConfig, path, buildProperties));
     }
 
-    public PublishTask(List<ConfigElement<?>> configs) {
+    public PublishTask(List<? extends ConfigElement> configs) {
         super(configs);
     }
 

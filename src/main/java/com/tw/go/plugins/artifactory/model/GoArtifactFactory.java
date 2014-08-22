@@ -11,7 +11,7 @@ import java.util.Collection;
 import static com.google.common.collect.Collections2.transform;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.buildProperties;
 import static com.tw.go.plugins.artifactory.task.config.ConfigElement.path;
-import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uri;
+import static com.tw.go.plugins.artifactory.task.config.ConfigElement.uriConfig;
 
 public class GoArtifactFactory {
 
@@ -33,7 +33,7 @@ public class GoArtifactFactory {
             }
 
             private String artifactUri(String artifactName) {
-                String baseUri = uri.from(config);
+                String baseUri = uriConfig.from(config).uri();
                 return multipleFiles ? baseUri + "/" + artifactName : baseUri;
             }
         };
