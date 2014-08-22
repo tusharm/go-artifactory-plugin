@@ -30,13 +30,13 @@ public class PathConfigElementTest {
     public void shouldNotValidateAnAbsolutePath() {
         String root = getLast(ROOT_DIRECTORIES).toString();
         Optional<ValidationError> error = path.validate(pathConfig(root));
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path should be relative to workspace"));
+        ASSERT.that(error).hasValue(new ValidationError("path", "Path should be relative to workspace"));
     }
 
     @Test
     public void shouldNotValidateEmptyPath() {
         Optional<ValidationError> error = path.validate(pathConfig(""));
-        ASSERT.that(error).hasValue(new ValidationError(path.name(), "Path is mandatory"));
+        ASSERT.that(error).hasValue(new ValidationError("path", "Path is mandatory"));
     }
 
     @Test

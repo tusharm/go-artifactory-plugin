@@ -13,15 +13,15 @@ import static org.truth0.Truth.ASSERT;
 
 public class UriConfigElementTest {
     @Test
-    public void shouldNotHaveAnEmptyUri() {
+    public void shouldInvalidateAnEmptyUri() {
         Optional<ValidationError> error = uriConfig.validate(uriConfig(""));
-        ASSERT.that(error).hasValue(new ValidationError(uriConfig.name(), "Uri is mandatory"));
+        ASSERT.that(error).hasValue(new ValidationError("uri", "Uri is mandatory"));
     }
 
     @Test
-    public void shouldNotHaveUriStartingWithSlash() {
+    public void shouldInvalidateUriStartingWithSlash() {
         Optional<ValidationError> error = uriConfig.validate(uriConfig("/a/b"));
-        ASSERT.that(error).hasValue(new ValidationError(uriConfig.name(), "Relative uri should not start with a '/'"));
+        ASSERT.that(error).hasValue(new ValidationError("uri", "Relative uri should not start with a '/'"));
     }
 
     @Test

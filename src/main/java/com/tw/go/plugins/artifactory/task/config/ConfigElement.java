@@ -24,10 +24,6 @@ public abstract class ConfigElement<T> {
         this.names = asList(name);
     }
 
-    public String name() {
-        return names.get(0);
-    }
-
     public void addTo(TaskConfig taskConfig) {
         for (String name : names) {
             taskConfig.addProperty(name);
