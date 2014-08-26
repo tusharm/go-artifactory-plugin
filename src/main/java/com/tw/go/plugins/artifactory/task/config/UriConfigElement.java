@@ -3,15 +3,19 @@ package com.tw.go.plugins.artifactory.task.config;
 import com.google.common.base.Optional;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationError;
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
+import com.thoughtworks.go.plugin.api.task.TaskConfigProperty;
+import com.tw.go.plugins.artifactory.Logger;
 
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
+import static java.lang.Boolean.valueOf;
 
 public class UriConfigElement extends ConfigElement<UriConfig> {
-    private static final String URI = "uri";
+    private static final String URI = "URI";
+    public static final String IS_FOLDER = "uriIsFolder";
 
     protected UriConfigElement() {
-        super(URI);
+        super(URI, IS_FOLDER);
     }
 
     @Override
@@ -29,6 +33,14 @@ public class UriConfigElement extends ConfigElement<UriConfig> {
 
     @Override
     public UriConfig from(TaskConfig taskConfig) {
-        return new UriConfig(taskConfig.getValue(URI));
+        String uri = taskConfig.getValue(URI);
+        String isFolder = taskConfig.getValue(IS_FOLDER);
+        return new UriConfig(uri, valueOf(isFolder));
+    }
+
+    @Override
+    public void addTo(TaskConfig taskConfig) {
+        taskConfig.add(new TaskConfigProperty(URI, ""));
+        taskConfig.add(new TaskConfigProperty(IS_FOLDER, "false"));
     }
 }

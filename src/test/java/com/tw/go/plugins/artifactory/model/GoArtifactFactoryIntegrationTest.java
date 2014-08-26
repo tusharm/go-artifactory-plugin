@@ -1,10 +1,10 @@
 package com.tw.go.plugins.artifactory.model;
 
+import com.google.common.collect.ImmutableMap;
 import com.thoughtworks.go.plugin.api.task.TaskConfig;
 import com.thoughtworks.go.plugin.api.task.TaskExecutionContext;
 import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
 import com.tw.go.plugins.artifactory.task.executor.TaskExecutionContextBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ import static org.truth0.Truth.ASSERT;
 public class GoArtifactFactoryIntegrationTest {
     private static GoArtifactFactory factory;
     private static TaskExecutionContext context;
-    private Map<String, String> properties = new HashMap<String, String>() {{ put("name", "value"); }};
+    private Map<String, String> properties = ImmutableMap.<String, String>builder().put("name", "value").build();
 
     @BeforeClass
     public static void beforeAll() throws Exception {
@@ -34,22 +34,23 @@ public class GoArtifactFactoryIntegrationTest {
     public void shouldCreateGoArtifacts() {
         TaskConfig config = new TaskConfigBuilder()
                 .path(path("src", "test", "resources", "artifact.txt"))
-                .uri("repo/path/to/artifact.ext")
+                .uri("repo/path/to/output.ext")
                 .property("name", "value")
                 .build();
 
         Collection<GoArtifact> artifacts = factory.createArtifacts(config, context);
 
-        GoArtifact expectedArtifact = goArtifact("src/test/resources/artifact.txt", "repo/path/to/artifact.ext", properties);
+        GoArtifact expectedArtifact = goArtifact("src/test/resources/artifact.txt", "repo/path/to/output.ext", properties);
 
         ASSERT.that(artifacts).has().exactly(expectedArtifact);
     }
 
     @Test
-    public void shouldCreateArtifactsWithUniqueUris() {
+    public void shouldCreateArtifactsWithUniqueRemotePathsIfUriIsAFolder() {
         TaskConfig config = new TaskConfigBuilder()
                 .path(asPath("src", "test", "resources", "**{artifact.txt,test.html}"))
                 .uri("repo/path")
+                .uriIsFolder(true)
                 .property("name", "value")
                 .build();
 
@@ -57,6 +58,23 @@ public class GoArtifactFactoryIntegrationTest {
 
         GoArtifact artifactTxt = goArtifact("src/test/resources/artifact.txt", "repo/path/artifact.txt", properties);
         GoArtifact testHtml = goArtifact("src/test/resources/view/test.html", "repo/path/test.html", properties);
+
+        ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
+    }
+
+    @Test
+    public void shouldCreateArtifactsWithSameRemotePathIfUriIsNotAFolder() {
+        TaskConfig config = new TaskConfigBuilder()
+                .path(asPath("src", "test", "resources", "**{artifact.txt,test.html}"))
+                .uri("repo/path")
+                .uriIsFolder(false)
+                .property("name", "value")
+                .build();
+
+        Collection<GoArtifact> artifacts = factory.createArtifacts(config, context);
+
+        GoArtifact artifactTxt = goArtifact("src/test/resources/artifact.txt", "repo/path", properties);
+        GoArtifact testHtml = goArtifact("src/test/resources/view/test.html", "repo/path", properties);
 
         ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
     }

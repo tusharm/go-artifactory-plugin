@@ -9,7 +9,7 @@ import static com.google.common.base.Optional.of;
 import static java.io.File.separator;
 
 public class PathConfigElement extends ConfigElement<String> {
-    private static final String PATH = "path";
+    private static final String PATH = "Path";
 
     protected PathConfigElement() {
         super(PATH);

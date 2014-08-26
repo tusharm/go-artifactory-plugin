@@ -12,7 +12,7 @@ import static com.google.common.base.Optional.of;
 
 public class BuildPropertiesConfigElement extends ConfigElement<Map<String, String>> {
     private static final String PROPERTIES_REGEX = "[^=]+=[^=]+((\\s)+[^=]+=[^=]+)*(\\s)*";
-    private static final String PROPERTIES = "properties";
+    private static final String PROPERTIES = "Properties";
 
     protected BuildPropertiesConfigElement() {
         super(PROPERTIES);

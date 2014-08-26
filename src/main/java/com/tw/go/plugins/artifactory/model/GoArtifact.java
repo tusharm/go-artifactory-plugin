@@ -23,11 +23,11 @@ public class GoArtifact {
     private Map<String, String> checksums = emptyMap();
 
 
-    public GoArtifact(String localPath, String uri) {
+    public GoArtifact(String localPath, String remotePath) {
         this.localPath = localPath;
         this.splitter = Splitter.on("/").omitEmptyStrings().trimResults();
 
-        List<String> segments = splitter.limit(2).splitToList(uri);
+        List<String> segments = splitter.limit(2).splitToList(remotePath);
         this.repository = segments.get(0);
         this.remotePath = segments.get(1);
     }
@@ -94,8 +94,8 @@ public class GoArtifact {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("path", localPath)
-                .add("uri", format("%s/%s", repository, remotePath))
+                .add("localPath", localPath)
+                .add("remotePath", format("%s/%s", repository, remotePath))
                 .add("properties", properties)
                 .toString();
     }

@@ -14,26 +14,34 @@ import static org.truth0.Truth.ASSERT;
 public class UriConfigElementTest {
     @Test
     public void shouldInvalidateAnEmptyUri() {
-        Optional<ValidationError> error = uriConfig.validate(uriConfig(""));
-        ASSERT.that(error).hasValue(new ValidationError("uri", "Uri is mandatory"));
+        Optional<ValidationError> error = uriConfig.validate(config("", true));
+        ASSERT.that(error).hasValue(new ValidationError("URI", "Uri is mandatory"));
     }
 
     @Test
     public void shouldInvalidateUriStartingWithSlash() {
-        Optional<ValidationError> error = uriConfig.validate(uriConfig("/a/b"));
-        ASSERT.that(error).hasValue(new ValidationError("uri", "Relative uri should not start with a '/'"));
+        Optional<ValidationError> error = uriConfig.validate(config("/a/b", true));
+        ASSERT.that(error).hasValue(new ValidationError("URI", "Relative uri should not start with a '/'"));
     }
 
     @Test
-    public void shouldReturnUri() {
-        TaskConfig taskConfig = uriConfig("google.com");
-        UriConfig uriConfig = ConfigElement.uriConfig.from(taskConfig);
-        ASSERT.that(uriConfig.uri()).is("google.com");
+    public void shouldReturnUriWithTrailingSlashesRemoved() {
+        TaskConfig taskConfig = config("google.com", true);
+        ASSERT.that(uriConfig.from(taskConfig).uri()).is("google.com");
     }
 
-    private TaskConfig uriConfig(String value) {
+    @Test
+    public void shouldReturnWhetherUriDenotesFolder() {
+        TaskConfig taskConfig = config("/path/to/artifact.ext", false);
+        ASSERT.that(uriConfig.from(taskConfig).isFolder()).is(false);
+    }
+
+    private TaskConfig config(String value, boolean isFolder) {
         TaskConfig mock = mock(TaskConfig.class);
-        when(mock.getValue("uri")).thenReturn(value);
+
+        when(mock.getValue("URI")).thenReturn(value);
+        when(mock.getValue("uriIsFolder")).thenReturn(String.valueOf(isFolder));
+
         return mock;
     }
 }

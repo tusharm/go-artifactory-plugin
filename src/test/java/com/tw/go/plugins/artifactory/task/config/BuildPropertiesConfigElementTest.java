@@ -30,7 +30,7 @@ public class BuildPropertiesConfigElementTest {
         TaskConfig taskConfig = propertiesConfig("a=b=c");
 
         ASSERT.that(buildProperties.validate(taskConfig))
-                .hasValue(new ValidationError("properties", "Invalid properties format"));
+                .hasValue(new ValidationError("Properties", "Invalid properties format"));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class BuildPropertiesConfigElementTest {
 
     private TaskConfig propertiesConfig(String value) {
         TaskConfig mock = mock(TaskConfig.class);
-        when(mock.getValue("properties")).thenReturn(value);
+        when(mock.getValue("Properties")).thenReturn(value);
         return mock;
     }
 }
