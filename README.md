@@ -20,8 +20,17 @@ Download the [plugin jar](https://github.com/tusharm/go-artifactory-plugin/relea
 on the Go server and restart. Refer to "Installing a plugin" section of [Go Documentation](http://www.thoughtworks.com/products/docs/go/current/help/go_plugins_basics.html) for details.
 
 The log file (`plugin-com.tw.go.plugins.go-artifactory-plugin.log`) is created on Go agent (e.g. on Linux, inside `/var/lib/go-agent`). 
+
 You can get better log messages by setting plugin log level in Go Agent startup configuration e.g. 
 `export GO_AGENT_SYSTEM_PROPERTIES=" -Dplugin.com.tw.go.plugins.go-artifactory-plugin.log.level=DEBUG "`
+
+The plugin internally uses Apache HttpClient to talk to Artifactory REST API. If you want to see HTTP messages on the wire, 
+you can enable logging for HttpClient e.g. by setting this in Go Agent start up config: `export GO_AGENT_SYSTEM_PROPERTIES=" -Dplugin.com.tw.go.plugins.go-artifactory-plugin.log.level=DEBUG 
+-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog 
+-Dorg.apache.commons.logging.simplelog.showdatetime=true 
+-Dorg.apache.commons.logging.simplelog.log.org.apache.http=DEBUG 
+-Dorg.apache.commons.logging.simplelog.log.org.apache.http.wire=ERROR
+`
 
 ### Screenshots
 
@@ -42,8 +51,7 @@ You can get better log messages by setting plugin log level in Go Agent startup 
 
 - Raise bugs
 - Suggest features
-- Collaborate, fork
-
+- Fork, collaborate
 
 ### License
 
