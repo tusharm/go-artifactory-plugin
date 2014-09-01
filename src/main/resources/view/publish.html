@@ -1,24 +1,28 @@
 <div class="form_item_block">
+    <style scoped>
+        .newline { clear: left; }
+    </style>
+
     <label>Artifactory URI:<span class="asterisk">*</span></label>
     <input type="text" ng-model="URI" />
+    <div class="contextual_help has_go_tip_right" title="e.g. repo-key/path/to/artifact.ext or repo-key/dir"></div>
     <span class="form_error" ng-show="GOINPUTNAME[URI].$error.server">{{ GOINPUTNAME[URI].$error.server }}</span>
-    <div class="inline_instruction">e.g. repo-key/path/to/artifact (or repo-key/dir if there are multiple artifacts)</div>
 
-    <!-- hack to make checkboxes work in Go Angular templates -->
-    <input type="checkbox" ng-model="uriIsFolderTmp"
-           ng-init="uriIsFolderTmp = uriIsFolder" ng-change="uriIsFolder = uriIsFolderTmp" ng-true-value="true" ng-false-value="false" />
-    <input type="hidden" ng-model="uriIsFolder" value="{{ uriIsFolder }}">
-
-    <label class="inline">URI denotes a folder</label>
+    <div class="newline">
+        <!-- hack to make checkboxes work in Go Angular templates -->
+        <input type="checkbox" ng-model="uriIsFolderTmp"
+               ng-init="uriIsFolderTmp = uriIsFolder" ng-change="uriIsFolder = uriIsFolderTmp" ng-true-value="true"
+               ng-false-value="false"/>
+        <input type="hidden" ng-model="uriIsFolder" value="{{ uriIsFolder }}">
+        <label class="inline">URI denotes a folder</label>
+    </div>
 </div>
 <div class="form_item_block">
     <label>Artifact Path:<span class="asterisk">*</span></label>
     <input type="text" ng-model="Path"/>
+    <div class="contextual_help has_go_tip_right"
+         title="Path can contain globs (refer Javadoc for java.nio.file.FileSystem#getPathMatcher). It should not start with a '/'"></div>
     <span class="form_error" ng-show="GOINPUTNAME[Path].$error.server">{{ GOINPUTNAME[Path].$error.server }}</span>
-    <div class="inline_instruction">Relative to working directory (<a
-            href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)">globs</a>
-        are allowed)
-    </div>
 </div>
 <div class="form_item_block">
     <label>Build properties:</label>
