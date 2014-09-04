@@ -11,7 +11,7 @@
         </vendor>
         <target-os>
             <value>Linux</value>
-            <value>Mac</value>
+            <value>Mac OS X</value>
             <value>Windows</value>
         </target-os>
     </about>
