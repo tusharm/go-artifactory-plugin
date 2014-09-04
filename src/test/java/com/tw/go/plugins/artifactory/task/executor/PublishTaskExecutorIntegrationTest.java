@@ -8,14 +8,20 @@ import com.thoughtworks.webstub.dsl.HttpDsl;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
+import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.read;
+import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
 import static com.tw.go.plugins.artifactory.testutils.MapBuilder.map;
+import static org.apache.commons.io.IOUtils.readLines;
+import static org.apache.commons.lang.StringUtils.join;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.truth0.Truth.ASSERT;
 
 public class PublishTaskExecutorIntegrationTest {
@@ -24,7 +30,7 @@ public class PublishTaskExecutorIntegrationTest {
     private PublishTaskExecutor executor;
 
     @BeforeClass
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException {
         server = newServer(8888);
         artifactoryStub = server.withContext("/");
         server.start();
@@ -39,7 +45,7 @@ public class PublishTaskExecutorIntegrationTest {
     }
 
     @Test
-    public void shouldUploadArtifactAndBuildDetails() {
+    public void shouldUploadArtifactAndBuildDetails() throws IOException {
         TaskConfig config = new TaskConfigBuilder()
                 .uri("test-repo/path/to/artifact.ext")
                 .path("src/test/resources/artifact.txt")
@@ -58,19 +64,32 @@ public class PublishTaskExecutorIntegrationTest {
                                 .and("GO_STAGE_COUNTER", "3"))
                         .build();
 
-        artifactoryStub.put("/test-repo/path/to/artifact.ext").withContent("content").returns(response(201));
+        File testResponse = new File(path("src", "test", "resources", "uploadResponse.json"));
+        artifactoryStub.put("/test-repo/path/to/artifact.ext").withContent("content")
+                .returns(response(201).withContent(read(testResponse)));
+
         artifactoryStub.put("/test-repo/path/to/artifact.ext.sha1").withContent("040f06fd774092478d450774f5ba30c5da78acc8").returns(response(201));
         artifactoryStub.put("/test-repo/path/to/artifact.ext.md5").withContent("9a0364b9e99bb480dd25e1f0284c8555").returns(response(201));
-
         artifactoryStub.put("/api/build").withHeader("Content-Type", "application/vnd.org.jfrog.artifactory+json").returns(response(204));
 
         ExecutionResult result = executor.execute(config, executionContext);
 
         ASSERT.that(result.isSuccessful()).isTrue();
+
+//        String metadataFilePath = System.getProperty("user.dir") + File.separator + "artifactoryMetadata.json";
+//        assertThat(new File(metadataFilePath).exists(), is(true));
     }
 
     @AfterClass
     public static void afterAll() {
         server.stop();
+    }
+
+    // Helpful for debugging
+    private void enableHttpLogs() {
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "DEBUG");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "ERROR");
     }
 }

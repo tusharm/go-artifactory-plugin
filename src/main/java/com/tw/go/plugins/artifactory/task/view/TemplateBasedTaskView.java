@@ -1,12 +1,10 @@
 package com.tw.go.plugins.artifactory.task.view;
 
-import com.google.common.io.CharStreams;
 import com.thoughtworks.go.plugin.api.task.TaskView;
 import com.tw.go.plugins.artifactory.Logger;
+import com.tw.go.plugins.artifactory.utils.filesystem.ClasspathResource;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import static java.lang.String.format;
 
@@ -15,10 +13,12 @@ public class TemplateBasedTaskView implements TaskView {
 
     private final String title;
     private final String template;
+    private final ClasspathResource classpathResource;
 
     public TemplateBasedTaskView(String title, String template) {
         this.title = title;
         this.template = template;
+        this.classpathResource = new ClasspathResource();
     }
 
     @Override
@@ -29,8 +29,7 @@ public class TemplateBasedTaskView implements TaskView {
     @Override
     public String template() {
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath());
-            return read(inputStream);
+            return classpathResource.read(templatePath());
         } catch (IOException e) {
             String message = format("Could not load view template [%s]!", template);
             logger.error(message, e);
@@ -40,11 +39,5 @@ public class TemplateBasedTaskView implements TaskView {
 
     private String templatePath() {
         return format("view/%s.html", template);
-    }
-
-    private String read(InputStream stream) throws IOException {
-        try (InputStreamReader reader = new InputStreamReader(stream, "UTF-8")) {
-            return CharStreams.toString(reader);
-        }
     }
 }

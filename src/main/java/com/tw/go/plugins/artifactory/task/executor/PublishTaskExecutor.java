@@ -62,7 +62,8 @@ public class PublishTaskExecutor implements TaskExecutor {
     private String asString(Collection<GoArtifact> artifacts) {
         StringBuilder result = new StringBuilder();
         for (GoArtifact artifact : artifacts) {
-            result.append(artifact).append("\n");
+            result.append(format("%s => %s", artifact.localPath(), artifact.remotePath()));
+            result.append("\n");
         }
         return result.toString();
     }

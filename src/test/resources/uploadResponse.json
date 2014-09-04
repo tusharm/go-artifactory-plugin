@@ -1,0 +1,18 @@
+{
+    "repo": "test-repo",
+    "path": "/test4/asm.jar",
+    "created": "2014-08-26T05:14:22.677Z",
+    "createdBy": "tushar",
+    "downloadUri": "http://server/org/test-repo/test4/asm.jar",
+    "mimeType": "application/java-archive",
+    "size": "38315",
+    "checksums": {
+        "sha1": "fae85e673c73f6f45386dbbcc2ae3aa6398a773f",
+        "md5": "5d9db6be0c31d0d895ad91af241e6fd2"
+    },
+    "originalChecksums": {
+        "sha1": "fae85e673c73f6f45386dbbcc2ae3aa6398a773f",
+        "md5": "5d9db6be0c31d0d895ad91af241e6fd2"
+    },
+    "uri": "http://server/org/test-repo/test4/asm.jar"
+}
