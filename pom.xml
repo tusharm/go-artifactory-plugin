@@ -12,7 +12,7 @@
 
     <properties>
         <go.version>14.1.0</go.version>
-        <buildinfo.version>2.2.7</buildinfo.version>
+        <buildinfo.version>2.3.x-SNAPSHOT</buildinfo.version>
     </properties>
 
     <licenses>
@@ -44,6 +44,10 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson</groupId>
+            <artifactId></artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>

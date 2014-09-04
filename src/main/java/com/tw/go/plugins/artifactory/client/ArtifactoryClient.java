@@ -2,10 +2,12 @@ package com.tw.go.plugins.artifactory.client;
 
 import com.google.common.base.Function;
 import com.tw.go.plugins.artifactory.Logger;
+import com.tw.go.plugins.artifactory.model.ArtifactUploadMetadata;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
 import org.jfrog.build.api.Build;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
+import org.jfrog.build.client.ArtifactoryUploadResponse;
 import org.jfrog.build.client.DeployDetails;
 
 import java.io.Closeable;
@@ -14,6 +16,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.toMap;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.chomp;
@@ -35,10 +39,13 @@ public class ArtifactoryClient implements Closeable {
         this.buildInfoClient = buildInfoClient;
     }
 
-    public void uploadArtifacts(Collection<GoArtifact> artifacts) {
-        for (GoArtifact artifact : artifacts) {
-            upload(artifact);
-        }
+    public Collection<ArtifactUploadMetadata> uploadArtifacts(Collection<GoArtifact> artifacts) {
+        return newArrayList(transform(artifacts, new Function<GoArtifact, ArtifactUploadMetadata>() {
+            @Override
+            public ArtifactUploadMetadata apply(GoArtifact artifact) {
+                return new ArtifactUploadMetadata(upload(artifact));
+            }
+        }));
     }
 
     public void uploadBuildDetails(GoBuildDetails details) {
@@ -55,7 +62,7 @@ public class ArtifactoryClient implements Closeable {
         buildInfoClient.shutdown();
     }
 
-    private void upload(GoArtifact artifact) {
+    private ArtifactoryUploadResponse upload(GoArtifact artifact) {
         File artifactFile = new File(artifact.localPath());
 
         try {
@@ -68,7 +75,7 @@ public class ArtifactoryClient implements Closeable {
                     .addProperties(removeTrailingSlashes(artifact.properties()))
                     .build();
 
-            buildInfoClient.deployArtifact(deployDetails);
+            return buildInfoClient.deployArtifact(deployDetails);
         } catch (IOException e) {
             throw new RuntimeException(format("Unable to upload artifact %s : %s", artifact, e.getMessage()), e);
         }
