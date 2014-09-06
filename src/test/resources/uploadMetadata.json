@@ -1,0 +1,22 @@
+[ {
+  "repo" : "repo",
+  "path" : "path",
+  "created" : "01-01-2014",
+  "createdBy" : "go",
+  "downloadUri" : "http://artifactory/path/to/artifact.ext",
+  "mimeType" : "application/json",
+  "size" : "21",
+  "uri" : "path/to/artifact.ext",
+  "errors" : [ {
+    "status" : "status",
+    "message" : "message"
+  } ],
+  "checksums" : {
+    "sha1" : "a",
+    "md5" : "b"
+  },
+  "originalChecksums" : {
+    "sha1" : "c",
+    "md5" : "d"
+  }
+} ]

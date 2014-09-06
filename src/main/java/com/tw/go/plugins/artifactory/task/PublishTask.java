@@ -6,6 +6,7 @@ import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import com.tw.go.plugins.artifactory.task.config.ConfigElement;
 import com.tw.go.plugins.artifactory.task.executor.PublishTaskExecutor;
+import com.tw.go.plugins.artifactory.task.publish.BuildArtifactPublisher;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import static java.util.Arrays.asList;
 
 @Extension
 public class PublishTask extends GenericTask {
+    private BuildArtifactPublisher buildArtifactPublisher = new BuildArtifactPublisher();
     private GoArtifactFactory artifactFactory = new GoArtifactFactory();
     private GoBuildDetailsFactory buildDetailsFactory = new GoBuildDetailsFactory();
 
@@ -27,7 +29,7 @@ public class PublishTask extends GenericTask {
 
     @Override
     public TaskExecutor executor() {
-        return new PublishTaskExecutor(artifactFactory, buildDetailsFactory);
+        return new PublishTaskExecutor(artifactFactory, buildDetailsFactory, buildArtifactPublisher);
     }
 
     @Override

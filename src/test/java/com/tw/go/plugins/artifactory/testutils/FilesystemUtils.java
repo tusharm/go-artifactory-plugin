@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.nio.file.Paths;
 
+import static java.lang.System.getProperty;
 import static org.apache.commons.lang.StringUtils.join;
 
 public class FilesystemUtils {
@@ -25,5 +26,9 @@ public class FilesystemUtils {
         try (OutputStream stream = new FileOutputStream(new File(path))) {
             IOUtils.write(content, stream, "UTF-8");
         }
+    }
+
+    public static void delete(File file) throws IOException {
+        FileUtils.forceDelete(file);
     }
 }

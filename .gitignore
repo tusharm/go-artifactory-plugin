@@ -3,3 +3,4 @@ build/
 *.iml
 .idea/
 target/
+com.tw.go.plugins.go-artifactory-plugin/

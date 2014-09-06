@@ -1,6 +1,5 @@
 package com.tw.go.plugins.artifactory.client;
 
-import com.google.common.collect.Iterables;
 import com.tw.go.plugins.artifactory.GoBuildDetailsBuilder;
 import com.tw.go.plugins.artifactory.model.ArtifactUploadMetadata;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
@@ -25,9 +24,9 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
 
 import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Iterables.size;
 import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
 import static com.tw.go.plugins.artifactory.testutils.MapBuilder.map;
 import static com.tw.go.plugins.artifactory.testutils.matchers.DeepEqualsMatcher.deepEquals;
@@ -69,7 +68,7 @@ public class ArtifactoryClientTest {
     public void shouldUploadAnArtifact() throws IOException, NoSuchAlgorithmException {
         when(buildInfoClient.deployArtifact(any(DeployDetails.class))).thenReturn(stubResponse);
 
-        Collection<ArtifactUploadMetadata> uploadMetadata = client.uploadArtifacts(asList(artifact));
+        Iterable<ArtifactoryUploadResponse> uploadMetadata = client.uploadArtifacts(asList(artifact)).getMetadata();
 
         verify(buildInfoClient).deployArtifact(deployDetailsCaptor.capture());
         assertThat(deployDetailsCaptor.getValue(), deepEquals(new DeployDetails.Builder()
@@ -83,8 +82,8 @@ public class ArtifactoryClientTest {
                 )
         );
 
-        assertThat(uploadMetadata.size(), is(1));
-        assertMatches(getFirst(uploadMetadata, null), stubResponse);
+        assertThat(size(uploadMetadata), is(1));
+        assertThat(getFirst(uploadMetadata, null), is(stubResponse));
     }
 
     @Test
@@ -139,6 +138,7 @@ public class ArtifactoryClientTest {
     }
 
     private void assertMatches(ArtifactUploadMetadata metadata, ArtifactoryUploadResponse response) {
+        assertThat(metadata.getUri(), is(response.getUri()));
         assertThat(metadata.getRepo(), is(response.getRepo()));
         assertThat(metadata.getPath(), is(response.getPath()));
         assertThat(metadata.getCreated(), is(response.getCreated()));
@@ -146,8 +146,10 @@ public class ArtifactoryClientTest {
         assertThat(metadata.getDownloadUri(), is(response.getDownloadUri()));
         assertThat(metadata.getMimeType(), is(response.getMimeType()));
         assertThat(metadata.getSize(), is(response.getSize()));
-        ASSERT.that(metadata.getErrors()).has().exactly("[status] message");
-        assertThat(metadata.getChecksums(), is("SHA1 => [a], MD5 => [b]"));
-        assertThat(metadata.getOriginalChecksums(), is("SHA1 => [c], MD5 => [d]"));
+        ASSERT.that(metadata.getErrors()).has().exactly("status: message");
+        assertThat(metadata.getSha1(), is(response.getChecksums().getSha1()));
+        assertThat(metadata.getMd5(), is(response.getChecksums().getMd5()));
+        assertThat(metadata.getOriginalSha1(), is(response.getOriginalChecksums().getSha1()));
+        assertThat(metadata.getOriginalMd5(), is(response.getOriginalChecksums().getMd5()));
     }
 }

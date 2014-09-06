@@ -2,6 +2,7 @@ package com.tw.go.plugins.artifactory.client;
 
 import org.jfrog.build.client.ArtifactoryUploadResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -19,7 +20,7 @@ public class ArtifactoryUploadResponseBuilder {
     private ArtifactoryUploadResponse.Checksums checksums = new ChecksumsBuilder().build("a", "b");
     private ArtifactoryUploadResponse.Checksums originalChecksums = new ChecksumsBuilder().build("c", "d");
 
-    ArtifactoryUploadResponse build() {
+    public ArtifactoryUploadResponse build() {
         ArtifactoryUploadResponse response = new ArtifactoryUploadResponse();
         response.setRepo(repo);
         response.setPath(path);
@@ -33,6 +34,11 @@ public class ArtifactoryUploadResponseBuilder {
         response.setChecksums(checksums);
         response.setOriginalChecksums(originalChecksums);
         return response;
+    }
+
+    public ArtifactoryUploadResponseBuilder withErrors(List<ArtifactoryUploadResponse.Error> errors) {
+        this.errors = errors;
+        return this;
     }
 
     private static class ChecksumsBuilder {

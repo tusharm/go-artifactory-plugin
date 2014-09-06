@@ -4,10 +4,8 @@ import com.thoughtworks.go.plugin.api.response.execution.ExecutionResult;
 import com.thoughtworks.go.plugin.api.task.*;
 import com.tw.go.plugins.artifactory.client.ArtifactoryClient;
 import com.tw.go.plugins.artifactory.Logger;
-import com.tw.go.plugins.artifactory.model.GoArtifact;
-import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
-import com.tw.go.plugins.artifactory.model.GoBuildDetails;
-import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
+import com.tw.go.plugins.artifactory.model.*;
+import com.tw.go.plugins.artifactory.task.publish.BuildArtifactPublisher;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -21,11 +19,13 @@ import static java.lang.String.format;
 public class PublishTaskExecutor implements TaskExecutor {
     private Logger logger = Logger.getLogger(getClass());
     private GoBuildDetailsFactory buildDetailsFactory;
+    private BuildArtifactPublisher buildArtifactPublisher;
     private GoArtifactFactory artifactFactory;
 
-    public PublishTaskExecutor(GoArtifactFactory factory, GoBuildDetailsFactory buildDetailsFactory) {
+    public PublishTaskExecutor(GoArtifactFactory factory, GoBuildDetailsFactory buildDetailsFactory, BuildArtifactPublisher buildArtifactPublisher) {
         this.artifactFactory = factory;
         this.buildDetailsFactory = buildDetailsFactory;
+        this.buildArtifactPublisher = buildArtifactPublisher;
     }
 
     @Override
@@ -35,13 +35,14 @@ public class PublishTaskExecutor implements TaskExecutor {
         EnvironmentVariables environment = context.environment();
         GoBuildDetails details = buildDetailsFactory.createBuildDetails(environment, artifacts);
 
-        Console console = context.console();
         try (ArtifactoryClient client = createClient(environment)) {
-            client.uploadArtifacts(artifacts);
+            UploadMetadata uploadMetadata = client.uploadArtifacts(artifacts);
             client.uploadBuildDetails(details);
 
-            // TODO: this message should be arg to success() but currently it is not working; possibly a Go fix?
-            console.printLine(format("Successfully published artifacts:\n%s", asString(artifacts)));
+            buildArtifactPublisher.publish(context, uploadMetadata);
+
+            context.console()
+                    .printLine(format("Successfully published artifacts:\n%s", asString(artifacts)));
             return success("");
         }
         catch (RuntimeException e) {

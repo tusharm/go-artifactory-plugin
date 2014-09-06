@@ -1,6 +1,7 @@
 package com.tw.go.plugins.artifactory.model;
 
 import com.google.common.base.Function;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.jfrog.build.client.ArtifactoryUploadResponse;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
+@JsonPropertyOrder({"downloadUri", "uri", "repo", "path", "mimeType", "size", "sha1", "originalSha1", "md5", "originalMd5", "created", "createdBy", "errors"})
 public class ArtifactUploadMetadata {
     private ArtifactoryUploadResponse response;
 
@@ -45,23 +47,37 @@ public class ArtifactUploadMetadata {
     }
 
     public List<String> getErrors() {
-        return newArrayList(transform(response.getErrors(), new Function<ArtifactoryUploadResponse.Error, String>() {
+        Iterable<String> transform = transform(response.getErrors(), new Function<ArtifactoryUploadResponse.Error, String>() {
             @Override
             public String apply(ArtifactoryUploadResponse.Error error) {
-                return format("[%s] %s", error.getStatus(), error.getMessage());
+                return format("%s: %s", error.getStatus(), error.getMessage());
             }
-        }));
+        });
+        return newArrayList(transform);
     }
 
-    public String getChecksums() {
-        return prettyPrint(response.getChecksums());
+    public String getSha1() {
+        ArtifactoryUploadResponse.Checksums checksums = response.getChecksums();
+        return checksums == null ? null : checksums.getSha1();
     }
 
-    public String getOriginalChecksums() {
-        return prettyPrint(response.getOriginalChecksums());
+    public String getMd5() {
+        ArtifactoryUploadResponse.Checksums checksums = response.getChecksums();
+        return checksums == null ? null : checksums.getMd5();
     }
 
-    private String prettyPrint(ArtifactoryUploadResponse.Checksums checksums) {
-        return format("SHA1 => [%s], MD5 => [%s]", checksums.getSha1(), checksums.getMd5());
+    public String getOriginalSha1() {
+        ArtifactoryUploadResponse.Checksums checksums = response.getOriginalChecksums();
+        return checksums == null ? null : checksums.getSha1();
     }
+
+    public String getOriginalMd5() {
+        ArtifactoryUploadResponse.Checksums checksums = response.getOriginalChecksums();
+        return checksums == null ? null : checksums.getMd5();
+    }
+
+    public String getUri() {
+        return response.getUri();
+    }
+
 }

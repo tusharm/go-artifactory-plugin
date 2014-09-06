@@ -46,6 +46,6 @@ public class BuildArtifactPublisherIntegrationTest {
 
     @After
     public void cleanUp() throws IOException {
-        FileUtils.forceDelete(new File(getProperty("java.io.tmpdir"), pluginId));
+        delete(new File(getProperty("java.io.tmpdir"), pluginId));
     }
 }

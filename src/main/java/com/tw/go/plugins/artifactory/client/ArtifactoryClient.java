@@ -2,9 +2,9 @@ package com.tw.go.plugins.artifactory.client;
 
 import com.google.common.base.Function;
 import com.tw.go.plugins.artifactory.Logger;
-import com.tw.go.plugins.artifactory.model.ArtifactUploadMetadata;
 import com.tw.go.plugins.artifactory.model.GoArtifact;
 import com.tw.go.plugins.artifactory.model.GoBuildDetails;
+import com.tw.go.plugins.artifactory.model.UploadMetadata;
 import org.jfrog.build.api.Build;
 import org.jfrog.build.client.ArtifactoryBuildInfoClient;
 import org.jfrog.build.client.ArtifactoryUploadResponse;
@@ -39,13 +39,14 @@ public class ArtifactoryClient implements Closeable {
         this.buildInfoClient = buildInfoClient;
     }
 
-    public Collection<ArtifactUploadMetadata> uploadArtifacts(Collection<GoArtifact> artifacts) {
-        return newArrayList(transform(artifacts, new Function<GoArtifact, ArtifactUploadMetadata>() {
+    public UploadMetadata uploadArtifacts(Collection<GoArtifact> artifacts) {
+        Iterable<ArtifactoryUploadResponse> responses = transform(artifacts, new Function<GoArtifact, ArtifactoryUploadResponse>() {
             @Override
-            public ArtifactUploadMetadata apply(GoArtifact artifact) {
-                return new ArtifactUploadMetadata(upload(artifact));
+            public ArtifactoryUploadResponse apply(GoArtifact artifact) {
+                return upload(artifact);
             }
-        }));
+        });
+        return new UploadMetadata(newArrayList(responses));
     }
 
     public void uploadBuildDetails(GoBuildDetails details) {
@@ -53,7 +54,9 @@ public class ArtifactoryClient implements Closeable {
         try {
             buildInfoClient.sendBuildInfo(build);
         } catch (IOException e) {
-            throw new RuntimeException(format("Unable to upload build info : %s", e.getMessage()), e);
+            String error = format("Unable to upload build info : %s", e.getMessage());
+            logger.error(error, e);
+            throw new RuntimeException(error, e);
         }
     }
 
@@ -77,7 +80,9 @@ public class ArtifactoryClient implements Closeable {
 
             return buildInfoClient.deployArtifact(deployDetails);
         } catch (IOException e) {
-            throw new RuntimeException(format("Unable to upload artifact %s : %s", artifact, e.getMessage()), e);
+            String error = format("Unable to upload artifact %s : %s", artifact, e.getMessage());
+            logger.error(error, e);
+            throw new RuntimeException(error, e);
         }
     }
 

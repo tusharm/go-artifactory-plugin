@@ -8,6 +8,9 @@ import com.thoughtworks.webstub.dsl.HttpDsl;
 import com.tw.go.plugins.artifactory.model.GoArtifactFactory;
 import com.tw.go.plugins.artifactory.model.GoBuildDetailsFactory;
 import com.tw.go.plugins.artifactory.task.config.TaskConfigBuilder;
+import com.tw.go.plugins.artifactory.task.publish.BuildArtifactPublisher;
+import com.tw.go.plugins.artifactory.testutils.FilesystemUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.*;
 
 import java.io.File;
@@ -15,6 +18,7 @@ import java.io.IOException;
 
 import static com.thoughtworks.webstub.StubServerFacade.newServer;
 import static com.thoughtworks.webstub.dsl.builders.ResponseBuilder.response;
+import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.delete;
 import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.read;
 import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
 import static com.tw.go.plugins.artifactory.testutils.MapBuilder.map;
@@ -28,6 +32,7 @@ public class PublishTaskExecutorIntegrationTest {
     private static StubServerFacade server;
     private static HttpDsl artifactoryStub;
     private PublishTaskExecutor executor;
+    private String pluginDirectory;
 
     @BeforeClass
     public static void beforeAll() throws IOException {
@@ -41,7 +46,8 @@ public class PublishTaskExecutorIntegrationTest {
         artifactoryStub.reset();
         artifactoryStub.get("/api/system/version").returns(response(200).withContent("{ \"version\" : \"3.2.1.1\" }"));
 
-        executor = new PublishTaskExecutor(new GoArtifactFactory(), new GoBuildDetailsFactory());
+        executor = new PublishTaskExecutor(new GoArtifactFactory(), new GoBuildDetailsFactory(), new BuildArtifactPublisher());
+        pluginDirectory = path(System.getProperty("java.io.tmpdir"), "com.tw.go.plugins.go-artifactory-plugin");
     }
 
     @Test
@@ -54,7 +60,7 @@ public class PublishTaskExecutorIntegrationTest {
 
         TaskExecutionContext executionContext =
                 new TaskExecutionContextBuilder()
-                        .withWorkingDir(System.getProperty("user.dir"))
+                        .withWorkingDir(System.getProperty("java.io.tmpdir"))
                         .withEnvVars(map("ARTIFACTORY_URL", "http://localhost:8888")
                                 .and("ARTIFACTORY_USER", "admin")
                                 .and("ARTIFACTORY_PASSWORD", "password")
@@ -75,9 +81,12 @@ public class PublishTaskExecutorIntegrationTest {
         ExecutionResult result = executor.execute(config, executionContext);
 
         ASSERT.that(result.isSuccessful()).isTrue();
+        ASSERT.that(new File(pluginDirectory, "uploadMetadata.json").exists()).isTrue();
+    }
 
-//        String metadataFilePath = System.getProperty("user.dir") + File.separator + "artifactoryMetadata.json";
-//        assertThat(new File(metadataFilePath).exists(), is(true));
+    @After
+    public void afterEach() throws IOException {
+        delete(new File(pluginDirectory));
     }
 
     @AfterClass
