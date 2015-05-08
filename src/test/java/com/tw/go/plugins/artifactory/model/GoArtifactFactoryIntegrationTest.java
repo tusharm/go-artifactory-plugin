@@ -10,26 +10,38 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.tw.go.plugins.artifactory.testutils.FilesystemUtils.path;
+import static com.tw.go.plugins.artifactory.testutils.MapBuilder.map;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.truth0.Truth.ASSERT;
 
 public class GoArtifactFactoryIntegrationTest {
+    
+    static private Map<String, String> envVars = map("GO_PIPELINE_NAME", "pipeline")
+            .and("GO_PIPELINE_COUNTER", "pipelineCounter")
+            .and("GO_STAGE_COUNTER", "stageCounter")
+            .and("GO_SERVER_URL", "https://localhost:8154/go/")
+            .and("ARTIFACTORY_PASSWORD", "passwd");
+
+            
     private static GoArtifactFactory factory;
     private static TaskExecutionContext context;
-    private Map<String, String> properties = ImmutableMap.<String, String>builder().put("name", "value").build();
+    private Map<String, String> properties = ImmutableMap.<String, String>builder().put("name", "value").put("build.name","pipeline").put("build.number","pipelineCounter.stageCounter").build();
 
     @BeforeClass
     public static void beforeAll() throws Exception {
+        
         context = new TaskExecutionContextBuilder()
                 .withWorkingDir(System.getProperty("user.dir"))
+                .withEnvVars(envVars)
                 .build();
+        
         factory = new GoArtifactFactory();
     }
 
+    
     @Test
     public void shouldCreateGoArtifacts() {
         TaskConfig config = new TaskConfigBuilder()

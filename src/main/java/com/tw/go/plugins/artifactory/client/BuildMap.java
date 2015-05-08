@@ -14,6 +14,9 @@ import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.tw.go.plugins.artifactory.task.EnvironmentData.GO_PIPELINE_COUNTER;
+import static com.tw.go.plugins.artifactory.task.EnvironmentData.GO_STAGE_COUNTER;
+import static java.lang.String.format;
 import static org.jfrog.build.api.Build.STARTED_FORMAT;
 import static org.jfrog.build.api.BuildInfoProperties.BUILD_INFO_ENVIRONMENT_PREFIX;
 import static org.joda.time.format.DateTimeFormat.forPattern;
@@ -22,8 +25,9 @@ public class BuildMap implements Function<GoBuildDetails, Build> {
 
     @Override
     public Build apply(GoBuildDetails buildDetails) {
+        // Changed the id format for the usual default, with build info
         Module module = new ModuleBuilder()
-                .id(buildDetails.buildName())
+                .id(format("%s:%s", buildDetails.buildName(),buildDetails.buildNumber()))
                 .artifacts(artifactsFrom(buildDetails))
                 .build();
 
