@@ -4,3 +4,4 @@ build/
 .idea/
 target/
 com.tw.go.plugins.go-artifactory-plugin/
+.ignore-*-settings
