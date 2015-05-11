@@ -113,7 +113,7 @@ public class ArtifactoryClientTest {
         ArgumentCaptor<Build> captor = ArgumentCaptor.forClass(Build.class);
         verify(buildInfoClient).sendBuildInfo(captor.capture());
 
-        Module module = new ModuleBuilder().id("buildName").addArtifact(
+        Module module = new ModuleBuilder().id("buildName:1.2").addArtifact(
                         new ArtifactBuilder("artifact.txt")
                                 .md5("9a0364b9e99bb480dd25e1f0284c8555")
                                 .sha1("040f06fd774092478d450774f5ba30c5da78acc8")
