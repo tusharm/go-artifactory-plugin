@@ -5,7 +5,7 @@
 
     <label>Artifactory URI:<span class="asterisk">*</span></label>
     <input type="text" ng-model="URI" />
-    <div class="contextual_help has_go_tip_right" title="e.g. repo-key/path/to/artifact.ext or repo-key/dir"></div>
+    <div class="contextual_help has_go_tip_right" title="e.g. repo-key/path/to/artifact.ext or repo-key/dir. Env variables ${GO_REVISION}"></div>
     <span class="form_error" ng-show="GOINPUTNAME[URI].$error.server">{{ GOINPUTNAME[URI].$error.server }}</span>
 
     <div class="newline">

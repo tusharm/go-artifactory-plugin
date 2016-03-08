@@ -24,8 +24,11 @@ public class GoArtifactFactoryIntegrationTest {
 
     @BeforeClass
     public static void beforeAll() throws Exception {
-        context = new TaskExecutionContextBuilder()
+        Map<String, String> envVars = new HashMap<>();
+        envVars.put("GO_REVISION", "123");
+		context = new TaskExecutionContextBuilder()
                 .withWorkingDir(System.getProperty("user.dir"))
+                .withEnvVars(envVars)
                 .build();
         factory = new GoArtifactFactory();
     }
@@ -75,6 +78,23 @@ public class GoArtifactFactoryIntegrationTest {
 
         GoArtifact artifactTxt = goArtifact("src/test/resources/artifact.txt", "repo/path", properties);
         GoArtifact testHtml = goArtifact("src/test/resources/view/test.html", "repo/path", properties);
+
+        ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
+    }
+    
+    @Test
+    public void shouldSubstituteEnvironmentVariablesIntoUri() {
+        TaskConfig config = new TaskConfigBuilder()
+                .path(asPath("src", "test", "resources", "**{artifact.txt,test.html}"))
+                .uri("repo/path/${GO_REVISION}")
+                .uriIsFolder(false)
+                .property("name", "value")
+                .build();
+
+        Collection<GoArtifact> artifacts = factory.createArtifacts(config, context);
+
+        GoArtifact artifactTxt = goArtifact("src/test/resources/artifact.txt", "repo/path/123", properties);
+        GoArtifact testHtml = goArtifact("src/test/resources/view/test.html", "repo/path/123", properties);
 
         ASSERT.that(artifacts).has().exactly(artifactTxt, testHtml);
     }
