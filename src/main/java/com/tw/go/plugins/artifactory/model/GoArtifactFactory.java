@@ -37,7 +37,7 @@ public class GoArtifactFactory {
 
             private String artifactUri(String artifactName) {
                 String uri = config.isFolder() ? config.uri() + "/" + artifactName : config.uri();
-                StrSubstitutor sub = new StrSubstitutor(context.environment().asMap(), "${", "}");
+                StrSubstitutor sub = new StrSubstitutor(context.environment().asMap());
                 return sub.replace(uri);
             }
             
